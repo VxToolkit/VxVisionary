@@ -28,10 +28,8 @@ int main(int argc, char *argv[])
                 QCoreApplication::exit(-1);
         }, Qt::QueuedConnection);
 
-    QTimer::singleShot(2000, [&splash, &engine, &url](){
-        splash.finish(nullptr);
-        engine.load(url);
-    });
+    splash.finish(nullptr);
+    engine.load(url);
 
     return app.exec();
 }

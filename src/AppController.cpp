@@ -5,18 +5,6 @@ AppController::AppController(QObject* parent)
     , m_statusMessage("Ready") {
 }
 
-QString AppController::statusMessage() const {
-    return m_statusMessage;
+ProjectModel* AppController::projectModel() const {
+    return const_cast<ProjectModel*>(&m_projectModel);
 }
-
-void AppController::setStatusMessage(const QString& message) {
-    if (m_statusMessage != message) {
-        m_statusMessage = message;
-        emit statusMessageChanged();
-    }
-}
-
-void AppController::performAction() {
-    setStatusMessage("Action performed!");
-}
-

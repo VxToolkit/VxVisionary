@@ -15,6 +15,8 @@ qt_policy(SET QTP0004 NEW)
 
 qt_add_executable(VxtVisionary
     src/Main.cpp
+    src/ProjectSelector/ProjectModel.cpp
+    src/ProjectSelector/ProjectModel.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)
@@ -29,9 +31,12 @@ qt_add_qml_module(VxtVisionary
 
     QML_FILES
     content/Main.qml
+    content/components/VxButton.qml
 
     RESOURCES
     assets/VXVisionarySplash.png
+    assets/VXT-Logo-Large.png
+    assets/Logo.png
 )
 
 target_link_libraries(VxtVisionary

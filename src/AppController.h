@@ -3,25 +3,19 @@
 #include <QObject>
 #include <QString>
 #include <QtQml/qqml.h>
+#include "ProjectSelector/ProjectModel.hpp"
 
 class AppController : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString statusMessage READ statusMessage WRITE setStatusMessage NOTIFY statusMessageChanged)
+    Q_PROPERTY(ProjectModel* projectModel READ projectModel CONSTANT)
     QML_ELEMENT
 
 public:
     explicit AppController(QObject* parent = nullptr);
 
-    QString statusMessage() const;
-
-    void setStatusMessage(const QString& message);
-
-public slots:
-    void performAction();
-
-    signals:
-        void statusMessageChanged();
+    ProjectModel* projectModel() const;
 
 private:
     QString m_statusMessage;
+    ProjectModel m_projectModel;
 };

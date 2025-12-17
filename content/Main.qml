@@ -2,8 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 
-import Main
-
 Window {
     id: window
     width: 600
@@ -17,10 +15,6 @@ Window {
     visible: true
 
     title: qsTr("VXTVisionary")
-
-    AppController {
-        id: backend
-    }
 
     Rectangle {
         anchors.fill: parent
@@ -89,11 +83,24 @@ Window {
                     onClicked: {
                         projectsList.currentIndex = index
                     }
+                    onDoubleClicked: {
+                        appController.loadProject(model.name)
+                    }
                 }
             }
 
-            model: backend.projectModel
+            model: appController.projectModel
 
         }
+    }
+    VxButton {
+        text: "New Project"
+        onVxClicked: {
+            appController.createNewProject()
+        }
+        anchors.top: listMask.bottom
+        anchors.topMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+
     }
 }

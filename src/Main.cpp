@@ -25,9 +25,11 @@ int main(int argc, char *argv[])
     splash.show();
     app.processEvents();
 
+    // engine
+    QQmlApplicationEngine* engine = new QQmlApplicationEngine();
+
     // load qml
-    QQmlApplicationEngine engine;
-    const QUrl url(u"qrc:/qt/qml/Main/content/Main.qml"_s);
+    AppController appController(engine);
 
     // load project lists
     QString config_path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
@@ -38,16 +40,15 @@ int main(int argc, char *argv[])
     }
 
     Project::getProjectList(dir);
-    Project::addRecentProject("~/Downloads/testProject.vxtemplate");
+    // Project::addRecentProject("~/Downloads/testProject.vxtemplate");
     std::vector<std::string> projects = Project::getRecentProjects();
 
     for (const auto& project : projects) {
-        AppController::projectModel()->addProject(project.c_str());
+        appController.projectModel()->addProject(project.c_str());
     }
 
     // close splashscreen on load
     splash.finish(nullptr);
-    engine.load(url);
 
     QObject::connect(&app, &QCoreApplication::aboutToQuit, [&config_path]() {
        Project::writeRecentProjects(config_path);

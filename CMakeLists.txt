@@ -17,6 +17,8 @@ qt_add_executable(VxtVisionary
     src/Main.cpp
     models/ProjectSelector/ProjectModel.cpp
     models/ProjectSelector/ProjectModel.hpp
+    src/AppController.cpp
+    src/AppController.h
     models/Project.cpp
     models/Project.hpp
 )
@@ -34,11 +36,15 @@ qt_add_qml_module(VxtVisionary
     QML_FILES
     content/Main.qml
     content/components/VxButton.qml
+    content/ProjectDashboard.qml
+    content/components/VxWorkspaceSelector.qml
 
     RESOURCES
     assets/VXVisionarySplash.png
     assets/VXT-Logo-Large.png
     assets/Logo.png
+    assets/Workspaces/arena-editor.png
+
 )
 
 target_link_libraries(VxtVisionary

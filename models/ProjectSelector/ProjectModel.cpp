@@ -8,8 +8,7 @@
 
 
 ProjectModel::ProjectModel(QObject* parent) : QAbstractListModel(parent) {
-    addProject("test1");
-    addProject("test2");
+
 }
 
 ProjectModel::~ProjectModel() = default;
@@ -23,7 +22,7 @@ QVariant ProjectModel::data(const QModelIndex& index, int role) const {
         return {};
     }
 
-    const Project& project = projects.at(static_cast<size_t>(index.row()));
+    const ListedProject& project = projects.at(static_cast<size_t>(index.row()));
 
     if (role == NameRole) {
         return project.path;

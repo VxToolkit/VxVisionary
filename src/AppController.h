@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QString>
 #include <QtQml/qqml.h>
-#include "ProjectSelector/ProjectModel.hpp"
+#include "models/ProjectSelector/ProjectModel.hpp"
 
 class AppController : public QObject {
     Q_OBJECT
@@ -13,9 +13,9 @@ class AppController : public QObject {
 public:
     explicit AppController(QObject* parent = nullptr);
 
-    ProjectModel* projectModel() const;
+    static ProjectModel* projectModel();
 
 private:
     QString m_statusMessage;
-    ProjectModel m_projectModel;
+    static ProjectModel m_projectModel;
 };

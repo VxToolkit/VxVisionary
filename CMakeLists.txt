@@ -15,8 +15,10 @@ qt_policy(SET QTP0004 NEW)
 
 qt_add_executable(VxtVisionary
     src/Main.cpp
-    src/ProjectSelector/ProjectModel.cpp
-    src/ProjectSelector/ProjectModel.hpp
+    models/ProjectSelector/ProjectModel.cpp
+    models/ProjectSelector/ProjectModel.hpp
+    models/Project.cpp
+    models/Project.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)

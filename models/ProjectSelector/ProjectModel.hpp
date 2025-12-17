@@ -6,7 +6,7 @@
 
 #include <QAbstractListModel>
 
-struct Project {
+struct ListedProject {
     QString path;
 };
 
@@ -28,5 +28,5 @@ public:
     void addProject(const QString &name);
 
 private:
-    std::vector<Project> projects;
+    std::vector<ListedProject> projects;
 };

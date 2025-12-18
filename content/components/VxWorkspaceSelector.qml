@@ -77,7 +77,7 @@ Button {
         MouseArea {
             id: mouseArea
             anchors.fill: parent
-            onClicked: vxWorkspaceButton.vxClicked()
+            onDoubleClicked: vxWorkspaceButton.vxClicked()
             hoverEnabled: true
         }
     }

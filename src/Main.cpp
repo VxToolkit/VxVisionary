@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QDirIterator>
+#include <QThread>
 #include <QDir>
 #include <QStandardPaths>
 #include "models/Project.hpp"

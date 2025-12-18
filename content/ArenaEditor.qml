@@ -10,10 +10,29 @@ Window {
 
     visible: true
 
-    title: qsTr("Arena Editor" - appController.projectName)
+    title: qsTr("Arena Editor")
 
     Rectangle {
         anchors.fill: parent
         color: "#202020"
     }
+
+
+    VxEditorToolbar {
+        title: "Arena Editor"
+
+        // push to the right
+        Item { Layout.fillWidth: true }
+
+        VxToolButton {
+            checkable: false
+            imageSource: "../../assets/Icons/save-icon.png"
+        }
+
+        VxToolButton {
+            checkable: false
+            imageSource: "../../assets/Icons/new-icon.png"
+        }
+    }
+
 }

@@ -31,6 +31,8 @@ qt_add_executable(VxtVisionary
     models/ArenaElements.hpp
     models/CopyUtils.cpp
     models/CopyUtils.hpp
+    src/Editors/ArenaEditor.cpp
+    src/Editors/ArenaEditor.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)
@@ -51,12 +53,22 @@ qt_add_qml_module(VxtVisionary
     content/components/VxButton.qml
     content/ProjectDashboard.qml
     content/components/VxWorkspaceSelector.qml
+    content/components/VxEditorToolbar.qml
+    content/components/VxToolButton.qml
+    content/ArenaEditor.qml
 
     RESOURCES
     assets/VXVisionarySplash.png
     assets/VXT-Logo-Large.png
     assets/Logo.png
     assets/Workspaces/arena-editor.png
+    assets/Workspaces/mission-editor.png
+    assets/Workspaces/config.png
+    assets/Workspaces/auto-journal.png
+    assets/Workspaces/build.png
+    assets/Workspaces/quick-build.png
+    assets/Icons/save-icon.png
+    assets/Icons/new-icon.png
 
 )
 

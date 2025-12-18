@@ -59,11 +59,19 @@ Window {
             radius: 10
 
             RowLayout {
+                spacing: 65
                 VxWorkspaceSelector {
                     imageSource: "../../assets/Workspaces/arena-editor.png"
                     buttonSubtext: "Arena Editor"
                     onVxClicked: {
-
+                        appController.openWorkspace("Arena Editor")
+                    }
+                }
+                VxWorkspaceSelector {
+                    imageSource: "../../assets/Workspaces/mission-editor.png"
+                    buttonSubtext: "Mission Editor"
+                    onVxClicked: {
+                        appController.openWorkspace("Mission Editor")
                     }
                 }
             }

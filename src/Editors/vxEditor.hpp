@@ -9,6 +9,6 @@
 #include "models/Project.hpp"
 
 
-class Editor : public QObject {
+class vxEditor : public QObject {
     Q_OBJECT
 };

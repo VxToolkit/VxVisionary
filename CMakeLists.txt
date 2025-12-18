@@ -21,6 +21,12 @@ qt_add_executable(VxtVisionary
     src/AppController.h
     models/Project.cpp
     models/Project.hpp
+    src/Editors/vxEditor.cpp
+    src/Editors/vxEditor.hpp
+    models/Asset.cpp
+    models/Asset.hpp
+    models/ArenaAsset.cpp
+    models/ArenaAsset.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)

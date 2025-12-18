@@ -2,12 +2,23 @@
 // Created by user on 12/17/25.
 //
 
-#ifndef VXTVISIONARY_ASSET_HPP
-#define VXTVISIONARY_ASSET_HPP
+#pragma once
+#include <QString>
 
-
-class Asset {
+enum class AssetType {
+    Arena
 };
 
+class Asset {
+public:
+    virtual ~Asset() = default;
 
-#endif //VXTVISIONARY_ASSET_HPP
+    QString getName();
+    virtual void outputData(QDataStream& stream);
+    virtual void inputData(QDataStream& stream);
+    virtual AssetType getType() = 0;
+
+protected:
+    QString name;
+};
+

@@ -1,0 +1,3 @@
+[submodule "template/vex2025"]
+	path = template/vex2025
+	url = https://github.com/270100pcti/vex2025.git

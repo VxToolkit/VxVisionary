@@ -14,9 +14,9 @@ public:
     virtual ~Asset() = default;
 
     QString getName();
-    virtual void outputData(QDataStream& stream);
+    virtual void outputData(QDataStream& stream) const;
     virtual void inputData(QDataStream& stream);
-    virtual AssetType getType() = 0;
+    [[nodiscard]] virtual AssetType getType() const = 0;
 
 protected:
     QString name;

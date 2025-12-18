@@ -2,6 +2,12 @@
 #include <filesystem>
 #include <QDir>
 #include <QFile>
+#include <QDataStream>
+#include <QDebug>
+#include <algorithm>
+#include <QtLogging>
+
+#include "ArenaAsset.hpp"
 
 std::vector<std::string> Project::recent_projects;
 #define PROJECT_FORMAT_VERSION 1
@@ -51,6 +57,12 @@ void Project::addRecentProject(const std::string& projectPath) {
 void Project::writeToFile(QDataStream& filedata) const {
     filedata << PROJECT_FORMAT_VERSION;
     filedata << name;
+
+    int numOfAssets = static_cast<int>(assets.size());
+    filedata << numOfAssets;
+    for (const auto& asset : assets) {
+        asset->outputData(filedata);
+    }
 }
 
 void Project::read_from_datastream(QDataStream& filedata) {
@@ -59,6 +71,28 @@ void Project::read_from_datastream(QDataStream& filedata) {
 
     if (version == 1) {
         filedata >> name;
+        int numOfAssets;
+        filedata >> numOfAssets;
+        qDebug() << "num assets: "+ std::to_string(numOfAssets);
+
+        assets.clear();
+        assets.reserve(static_cast<size_t>(numOfAssets));
+
+        for (int i = 0; i < numOfAssets; ++i) {
+            int type = 0;
+            filedata >> type;
+            if (type == static_cast<int>(AssetType::Arena)) {
+                ArenaAsset* asset = new ArenaAsset();
+
+                asset->inputData(filedata);
+                assets.push_back(dynamic_cast<Asset*>(asset));
+            }
+            else {
+                throw std::runtime_error("Unknown Asset type: "+std::to_string(type));
+            }
+        }
+
+        assets.shrink_to_fit();
     } else {
         throw std::runtime_error("Failed to read project file: Unsupported version");
     }

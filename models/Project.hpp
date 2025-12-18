@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "Asset.hpp"
+
 class Project {
 public:
 
@@ -28,4 +30,5 @@ protected:
     QDir path;
     // statics
     static std::vector<std::string> recent_projects;
+    std::vector<Asset*> assets;
 };

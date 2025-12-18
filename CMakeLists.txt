@@ -27,9 +27,16 @@ qt_add_executable(VxtVisionary
     models/Asset.hpp
     models/ArenaAsset.cpp
     models/ArenaAsset.hpp
+    models/ArenaElements.cpp
+    models/ArenaElements.hpp
+    models/CopyUtils.cpp
+    models/CopyUtils.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)
+
+add_subdirectory(template/vex2025)
+include_directories(template/vex2025/src/lib)
 
 qt_add_qml_module(VxtVisionary
     URI "Main"
@@ -58,4 +65,5 @@ target_link_libraries(VxtVisionary
     PRIVATE Qt6::Widgets
     PRIVATE Qt6::Gui
     PRIVATE Qt6::Core
+    PRIVATE VxTemplate
 )

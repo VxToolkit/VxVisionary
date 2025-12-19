@@ -10,10 +10,12 @@ QString Asset::getName() {
 }
 
 void Asset::outputData(QDataStream& stream) const {
-    stream << name;
     stream << getType();
+    stream << name;
 }
 
 void Asset::inputData(QDataStream& stream) {
     stream >> name;
 }
+
+Asset::Asset(QString name) : name(std::move(name)) {}

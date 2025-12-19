@@ -22,6 +22,30 @@ Window {
         color: "#202020"
     }
 
+    MenuBar {
+        Menu {
+            title: "File"
+            MenuItem {
+                text: "New Project"
+                onTriggered: {
+                    appController.createNewProject()
+                }
+            }
+            MenuItem {
+                text: "Exit"
+                onTriggered: {
+                    Qt.quit()
+                }
+            }
+            MenuItem {
+                text: "Save"
+                onTriggered: {
+                    appController.saveCurrentProject()
+                }
+            }
+        }
+    }
+
     Column {
         anchors.fill: parent
         anchors.margins: 20

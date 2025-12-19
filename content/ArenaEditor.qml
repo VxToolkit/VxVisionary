@@ -17,7 +17,6 @@ Window {
         color: "#202020"
     }
 
-
     VxEditorToolbar {
         title: "Arena Editor"
 
@@ -32,6 +31,10 @@ Window {
         VxToolButton {
             checkable: false
             imageSource: "../../assets/Icons/new-icon.png"
+            onVxClicked: {
+                arenaEditor.newArena();
+            }
+
         }
     }
 

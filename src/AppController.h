@@ -23,6 +23,7 @@ public:
     Q_INVOKABLE void loadProject(const QString& projectPath);
     Q_INVOKABLE void createNewProject();
     Q_INVOKABLE void openWorkspace(QString name);
+    Q_INVOKABLE void saveCurrentProject();
 
     template<typename T>
     T* getEditorOfType(EditorType type) {

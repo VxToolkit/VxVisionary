@@ -13,6 +13,7 @@ public:
     Project(QString projectName, QString projectPath);
     void writeToFile(QDataStream& filedata) const;
     void save() const;
+    void addAsset(Asset* asset);
 
     void read_from_datastream(QDataStream& filedata);
 

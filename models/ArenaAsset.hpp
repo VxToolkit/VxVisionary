@@ -10,12 +10,17 @@
 
 class ArenaAsset : public Asset {
 public:
+
+    ArenaAsset(QString name,Vec2 bounds);
+    ArenaAsset(QDataStream* stream);
     [[nodiscard]] [[nodiscard]] AssetType getType() const override;
     void outputData(QDataStream& stream) const override;
     void inputData(QDataStream& stream) override;
 
+    void addElement(ArenaElement* element);
+
 protected:
     std::vector<ArenaElement*> elements;
-    Transforms2D bounds;
+    Vec2 bounds;
 };
 

@@ -7,6 +7,7 @@
 #include <QString>
 #include <qtmetamacros.h>
 
+class AppController;
 #include "models/Project.hpp"
 
 enum class EditorType {
@@ -18,11 +19,12 @@ enum class EditorType {
 class vxEditor : public QObject {
     Q_OBJECT
 public:
-    vxEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window);
+    vxEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController* controller);
 
     virtual EditorType type() const;
 
 protected:
+    AppController* m_controller;
     QQmlApplicationEngine* m_engine = nullptr;
     QObject* m_window = nullptr;
 };

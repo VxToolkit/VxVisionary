@@ -4,10 +4,18 @@
 
 #include "ArenaAsset.hpp"
 
+#include <utility>
+
 #include "CopyUtils.hpp"
 
 AssetType ArenaAsset::getType() const {
     return AssetType::Arena;
+}
+
+ArenaAsset::ArenaAsset(QString name, Vec2 bounds) : Asset(std::move(name)), bounds(bounds) {}
+
+ArenaAsset::ArenaAsset(QDataStream* stream) : Asset("") {
+    ArenaAsset::inputData(*stream);
 }
 
 void ArenaAsset::outputData(QDataStream& stream) const {
@@ -18,7 +26,7 @@ void ArenaAsset::outputData(QDataStream& stream) const {
         stream << static_cast<int>(element->getType());
         element->outputData(stream);
     }
-    CopyUtils::writeTransforms2D(bounds, stream);
+    CopyUtils::writeVec2(bounds, stream);
 
 }
 
@@ -44,4 +52,9 @@ void ArenaAsset::inputData(QDataStream& stream) {
             throw std::runtime_error("Unknown Arena Asset type: "+std::to_string(type));
         }
     }
+    bounds = CopyUtils::readVec2(stream);
+}
+
+void ArenaAsset::addElement(ArenaElement* element) {
+    elements.push_back(element);
 }

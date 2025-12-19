@@ -102,7 +102,7 @@ void AppController::openWorkspace(QString name) {
             return;
         }
 
-        ArenaEditor* arenaEditor = new ArenaEditor(this, m_engine, window);
+        ArenaEditor* arenaEditor = new ArenaEditor(this, m_engine, window, this);
         m_openEditors.push_back(arenaEditor);
     }
 }
@@ -126,4 +126,10 @@ void AppController::deleteEditorPtr(EditorType type) {
             }
             return false;
         }), m_openEditors.end());
+}
+
+void AppController::saveCurrentProject() {
+    if (m_currentLoadedProject) {
+        m_currentLoadedProject->save();
+    }
 }

@@ -5,13 +5,14 @@
 #pragma once
 #include <QString>
 
-enum class AssetType {
+enum class AssetType : int {
     Arena
 };
 
 class Asset {
 public:
     virtual ~Asset() = default;
+    explicit Asset(QString name);
 
     QString getName();
     virtual void outputData(QDataStream& stream) const;

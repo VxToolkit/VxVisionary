@@ -82,9 +82,7 @@ void Project::read_from_datastream(QDataStream& filedata) {
             int type = 0;
             filedata >> type;
             if (type == static_cast<int>(AssetType::Arena)) {
-                ArenaAsset* asset = new ArenaAsset();
-
-                asset->inputData(filedata);
+                ArenaAsset* asset = new ArenaAsset(&filedata);
                 assets.push_back(dynamic_cast<Asset*>(asset));
             }
             else {
@@ -133,4 +131,8 @@ void Project::save() const {
 
     QDataStream filedata(&file);
     writeToFile(filedata);
+}
+
+void Project::addAsset(Asset* asset) {
+    assets.push_back(asset);
 }

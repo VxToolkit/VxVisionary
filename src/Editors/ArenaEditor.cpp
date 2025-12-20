@@ -7,6 +7,7 @@
 #include <qqmlcontext.h>
 #include <QQuickWindow>
 #include <QInputDialog>
+#include <QMessageBox>
 
 #include "AppController.h"
 #include "models/ArenaAsset.hpp"
@@ -42,5 +43,23 @@ void ArenaEditor::newArena() const {
     if (ok && !newName.isEmpty()) {
         ArenaAsset *newArena = new ArenaAsset(newName, {100,100});
         m_controller->currentLoadedProject()->addAsset(dynamic_cast<Asset*>(newArena));
+    }
+}
+
+void ArenaEditor::openArena() {
+    m_controller->askForAsset(this, Vxt::AssetType::Arena);
+}
+
+void ArenaEditor::loadArena(ArenaAsset* assetToLoad) {
+    qWarning() << "Loading arena asset:" << assetToLoad->getName();
+    activeArena = assetToLoad;
+}
+
+void ArenaEditor::assetRecieved(Asset* asset) {
+    ArenaAsset* arenaAsset = dynamic_cast<ArenaAsset*>(asset);
+    if (arenaAsset) {
+        loadArena(arenaAsset);
+    } else {
+        QMessageBox::warning(nullptr, "Error", "Please select a new arena asset.");
     }
 }

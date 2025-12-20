@@ -25,7 +25,10 @@ Window {
 
         VxToolButton {
             checkable: false
-            imageSource: "../../assets/Icons/save-icon.png"
+            imageSource: "../../assets/Icons/open-file.png"
+            onVxClicked: {
+                arenaEditor.openArena();
+            }
         }
 
         VxToolButton {

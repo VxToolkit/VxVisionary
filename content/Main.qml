@@ -45,60 +45,32 @@ Window {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    Rectangle {
-        id: listMask
+    VxListView {
+        id: projectList
+
         width: parent.width * 0.8
         height: 150
-
         anchors.top: logoImage.bottom
         anchors.topMargin: 30
-
         anchors.horizontalCenter: parent.horizontalCenter
 
-        color: "#444444"
-        border.width: 2
-        border.color: "#a82828"
-        clip: true
+        model: appController.projectModel
 
-        ListView {
-            id: projectsList
-            anchors.fill: parent
-            clip: true
+        onItemClicked: (index, name) => {
+            console.log("Selected: " + name)
+        }
 
-            delegate: Rectangle {
-                width: parent.width
-                height: 20
-
-                color: ListView.isCurrentItem ? "#db2828" : "transparent"
-
-                Text {
-                    color: ListView.isCurrentItem ? "black" : "white"
-                    text: model.name
-                    anchors.centerIn: parent
-                    font.bold: ListView.isCurrentItem
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        projectsList.currentIndex = index
-                    }
-                    onDoubleClicked: {
-                        appController.loadProject(model.name)
-                    }
-                }
-            }
-
-            model: appController.projectModel
-
+        onItemDoubleClicked: (index, name) => {
+            appController.loadProject(name)
         }
     }
+
     VxButton {
         text: "New Project"
         onVxClicked: {
             appController.createNewProject()
         }
-        anchors.top: listMask.bottom
+        anchors.top: projectList.bottom
         anchors.topMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
 

@@ -81,7 +81,7 @@ void Project::read_from_datastream(QDataStream& filedata) {
         for (int i = 0; i < numOfAssets; ++i) {
             int type = 0;
             filedata >> type;
-            if (type == static_cast<int>(AssetType::Arena)) {
+            if (type == static_cast<int>(Vxt::AssetType::Arena)) {
                 ArenaAsset* asset = new ArenaAsset(&filedata);
                 assets.push_back(dynamic_cast<Asset*>(asset));
             }
@@ -135,4 +135,18 @@ void Project::save() const {
 
 void Project::addAsset(Asset* asset) {
     assets.push_back(asset);
+}
+
+std::vector<Asset*> Project::getAssetsOfType(Vxt::AssetType type) const {
+    std::vector<Asset*> filteredAssets;
+    for (const auto& asset : assets) {
+        if (asset->getType() == type || type == Vxt::AssetType::Null) {
+            filteredAssets.push_back(asset);
+        }
+    }
+    return filteredAssets;
+}
+
+std::vector<Asset*>& Project::getAssets() {
+    return assets;
 }

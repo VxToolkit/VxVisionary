@@ -12,3 +12,7 @@ vxEditor::vxEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* wind
 EditorType vxEditor::type() const {
     return EditorType::Null;
 }
+
+void vxEditor::assetRecieved(Asset* asset) {
+    // default imp
+}

@@ -19,3 +19,21 @@ void Asset::inputData(QDataStream& stream) {
 }
 
 Asset::Asset(QString name) : name(std::move(name)) {}
+
+unsigned int Asset::getLoadedInstances() const {
+    return loadedInstances;
+}
+
+void Asset::incrementLoadedInstances() {
+    loadedInstances++;
+}
+
+void Asset::decrementLoadedInstances() {
+    if (loadedInstances > 0) {
+        loadedInstances--;
+    }
+}
+
+void Asset::resetLoadedInstances() {
+    loadedInstances = 0;
+}

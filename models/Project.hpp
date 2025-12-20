@@ -15,6 +15,9 @@ public:
     void save() const;
     void addAsset(Asset* asset);
 
+    std::vector<Asset*>& getAssets();
+    std::vector<Asset*> getAssetsOfType(Vxt::AssetType type) const;
+
     void read_from_datastream(QDataStream& filedata);
 
     [[nodiscard]] QString getName() const;

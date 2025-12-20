@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
+import VxtVisionary.Models 1.0
 
 Window {
     id: window
@@ -17,20 +18,42 @@ Window {
 
     title: qsTr("Dashboard")
 
+    VxAssetDialog {
+        id: assetPicker
+
+        assetModel: dynamicFilter
+
+        onAssetSelected: (name) => {
+            appController.assetReceived(name)
+        }
+    }
+
+    AssetFilterModel {
+        id: dynamicFilter
+        sourceModel: appController.assetModel
+        acceptedType: AssetType.Null
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "#202020"
     }
 
+    Connections {
+        target: appController
+
+        function onRequestOpenAssetDiag(typeAsInt) {
+            console.log("opening diag: " + typeAsInt)
+
+            dynamicFilter.acceptedType = typeAsInt
+
+            assetPicker.open()
+        }
+    }
+
     MenuBar {
         Menu {
             title: "File"
-            MenuItem {
-                text: "New Project"
-                onTriggered: {
-                    appController.createNewProject()
-                }
-            }
             MenuItem {
                 text: "Exit"
                 onTriggered: {

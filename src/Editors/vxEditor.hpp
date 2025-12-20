@@ -22,6 +22,7 @@ public:
     vxEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController* controller);
 
     virtual EditorType type() const;
+    virtual void assetRecieved(Asset* asset);
 
 protected:
     AppController* m_controller;

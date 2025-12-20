@@ -5,9 +5,15 @@
 #pragma once
 #include <QString>
 
-enum class AssetType : int {
-    Arena
-};
+namespace Vxt
+{
+    Q_NAMESPACE
+    enum class AssetType : int {
+        Null = -1,
+        Arena
+    };
+    Q_ENUM_NS(AssetType)
+}
 
 class Asset {
 public:
@@ -17,9 +23,15 @@ public:
     QString getName();
     virtual void outputData(QDataStream& stream) const;
     virtual void inputData(QDataStream& stream);
-    [[nodiscard]] virtual AssetType getType() const = 0;
+    [[nodiscard]] virtual Vxt::AssetType getType() const = 0;
+
+    unsigned int getLoadedInstances() const;
+    void incrementLoadedInstances();
+    void decrementLoadedInstances();
+    void resetLoadedInstances();
 
 protected:
     QString name;
+    unsigned int loadedInstances = 0;
 };
 

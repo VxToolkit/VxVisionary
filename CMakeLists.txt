@@ -33,6 +33,10 @@ qt_add_executable(VxtVisionary
     models/CopyUtils.hpp
     src/Editors/ArenaEditor.cpp
     src/Editors/ArenaEditor.hpp
+    models/Assets/AssetFilterModel.cpp
+    models/Assets/AssetFilterModel.hpp
+    models/Assets/AssetModel.cpp
+    models/Assets/AssetModel.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)
@@ -56,6 +60,8 @@ qt_add_qml_module(VxtVisionary
     content/components/VxEditorToolbar.qml
     content/components/VxToolButton.qml
     content/ArenaEditor.qml
+    content/components/VxListView.qml
+    content/components/VxAssetDialog.qml
 
     RESOURCES
     assets/VXVisionarySplash.png
@@ -69,6 +75,7 @@ qt_add_qml_module(VxtVisionary
     assets/Workspaces/quick-build.png
     assets/Icons/save-icon.png
     assets/Icons/new-icon.png
+    assets/Icons/open-file.png
 
 )
 

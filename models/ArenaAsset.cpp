@@ -8,8 +8,8 @@
 
 #include "CopyUtils.hpp"
 
-AssetType ArenaAsset::getType() const {
-    return AssetType::Arena;
+Vxt::AssetType ArenaAsset::getType() const {
+    return Vxt::AssetType::Arena;
 }
 
 ArenaAsset::ArenaAsset(QString name, Vec2 bounds) : Asset(std::move(name)), bounds(bounds) {}

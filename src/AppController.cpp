@@ -5,11 +5,13 @@
 #include <QFileDialog>
 #include <QFile>
 #include <qqmlcomponent.h>
+#include <QQuickWindow>
 
 #include "Editors/vxEditor.hpp"
 
 #include "QMessageBox"
 #include "Editors/ArenaEditor.hpp"
+#include "models/Assets/AssetFilterModel.hpp"
 
 using namespace Qt::StringLiterals;
 
@@ -18,11 +20,23 @@ std::unordered_map<EditorType, QObject*> AppController::m_editorWindows;
 
 AppController::AppController(QQmlApplicationEngine* engine, QObject* parent) : QObject(parent) , m_statusMessage("Ready") , m_engine(engine) {
     m_engine->rootContext()->setContextProperty("appController", this);
+    qmlRegisterType<AssetFilterModel>("VxtVisionary.Models", 1, 0, "AssetFilterModel");
+
+    qmlRegisterUncreatableMetaObject(
+    Vxt::staticMetaObject,
+    "VxtVisionary.Models",
+    1, 0,
+    "AssetType",
+    "Error: Cannot create enum"
+    );
+
     const QUrl mainQML(u"qrc:/qt/qml/Main/content/Main.qml"_s);
     m_engine->load(mainQML);
 
     QQmlComponent arenaEditorComponent(m_engine, QUrl(QStringLiteral("qrc:/qt/qml/Main/content/ArenaEditor.qml")));
 
+    m_assetModel = new AssetModel(this, this);
+    setAssetModel(m_assetModel);
 
     QObject* arenaEditorWindow = arenaEditorComponent.create();
 
@@ -58,6 +72,18 @@ void AppController::loadProject(const QString &projectPath) {
 
         QObject *found_object = m_engine->rootObjects().first();
         QMetaObject::invokeMethod(found_object, "close");
+
+        QObject *newDashboard = m_engine->rootObjects().last();
+        QQuickWindow *newWindow = qobject_cast<QQuickWindow*>(newDashboard);
+
+        if (newWindow) {
+            connect(newWindow, &QQuickWindow::closing, [this]() {
+                delete m_currentLoadedProject;
+                m_currentLoadedProject = nullptr;
+                QCoreApplication::quit();
+            });
+        }
+
         emit projectNameChanged();
 
     } catch (const std::runtime_error& e) {
@@ -128,8 +154,65 @@ void AppController::deleteEditorPtr(EditorType type) {
         }), m_openEditors.end());
 }
 
+std::vector<Asset*> AppController::getAssetsOfType(Vxt::AssetType type) const {
+    if (m_currentLoadedProject) {
+        return m_currentLoadedProject->getAssetsOfType(type);
+    }
+    return {};
+}
+
 void AppController::saveCurrentProject() {
     if (m_currentLoadedProject) {
         m_currentLoadedProject->save();
     }
+}
+
+AssetModel* AppController::assetModel() const {
+    return m_assetModel;
+}
+
+void AppController::setAssetModel(AssetModel* model) {
+    m_assetModel = model;
+    emit assetModelChanged();
+}
+
+std::vector<Asset*>& AppController::getAssets() const {
+    if (m_currentLoadedProject) {
+        return m_currentLoadedProject->getAssets();
+    }
+    static std::vector<Asset*> empty;
+    return empty;
+}
+
+void AppController::askForAsset(vxEditor* editor, Vxt::AssetType type) {
+    if (m_editorAskedForAsset) {
+        QMessageBox::critical(nullptr, "Error", "An editor is already requesting an asset.");
+        return;
+    }
+    m_editorAskedForAsset = editor;
+    emit requestOpenAssetDiag(static_cast<qint32>(type));
+}
+
+void AppController::assetReceived(QString name) {
+    if (!m_editorAskedForAsset) {
+        QMessageBox::critical(nullptr, "Error", "No editor is requesting an asset.");
+        return;
+    }
+
+    Asset* foundAsset = nullptr;
+    for (Asset* asset : getAssets()) {
+        if (asset->getName() == name) {
+            foundAsset = asset;
+            break;
+        }
+    }
+
+    if (!foundAsset) {
+        QMessageBox::critical(nullptr, "Error", "The requested asset could not be found.");
+        m_editorAskedForAsset = nullptr;
+        return;
+    }
+
+    m_editorAskedForAsset->assetRecieved(foundAsset);
+    m_editorAskedForAsset = nullptr;
 }

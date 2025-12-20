@@ -13,7 +13,7 @@ public:
 
     ArenaAsset(QString name,Vec2 bounds);
     ArenaAsset(QDataStream* stream);
-    [[nodiscard]] [[nodiscard]] AssetType getType() const override;
+    [[nodiscard]] [[nodiscard]] Vxt::AssetType getType() const override;
     void outputData(QDataStream& stream) const override;
     void inputData(QDataStream& stream) override;
 

@@ -17,28 +17,56 @@ Window {
         color: "#202020"
     }
 
-    VxEditorToolbar {
-        title: "Arena Editor"
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
 
-        // push to the right
-        Item { Layout.fillWidth: true }
+        VxEditorToolbar {
+            title: "Arena Editor"
+            Layout.fillWidth: true
 
-        VxToolButton {
-            checkable: false
-            imageSource: "../../assets/Icons/open-file.png"
-            onVxClicked: {
-                arenaEditor.openArena();
+
+            // push to the right
+            Item {
+                Layout.fillWidth: true
+            }
+
+            VxToolButton {
+                checkable: false
+                imageSource: "../../assets/Icons/open-file.png"
+                onVxClicked: {
+                    arenaEditor.openArena();
+                }
+            }
+
+            VxToolButton {
+                checkable: false
+                imageSource: "../../assets/Icons/new-icon.png"
+                onVxClicked: {
+                    arenaEditor.newArena();
+                }
+
             }
         }
 
-        VxToolButton {
-            checkable: false
-            imageSource: "../../assets/Icons/new-icon.png"
-            onVxClicked: {
-                arenaEditor.newArena();
+        VxTabList {
+            id: tabList
+            Layout.fillWidth: true
+            tabNames: arenaEditor.tabs
+            height: 35
+
+            onTabSelected: (index) => {
+                arenaEditor.setCurrentTab(index);
             }
 
+            onTabClosed: (index) => {
+                arenaEditor.deleteTab(index);
+            }
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
-
 }

@@ -11,6 +11,8 @@
 
 class ArenaEditor : public vxEditor {
     Q_OBJECT
+    Q_PROPERTY(ArenaAsset* currentArena READ getCurrentArena NOTIFY arenaChanged)
+    Q_PROPERTY(QStringList tabs READ getTabs NOTIFY tabUpdateEvent)
 public:
     virtual ~ArenaEditor();
     ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController* controller);
@@ -20,6 +22,16 @@ public:
     EditorType type() const override;
     void assetRecieved(Asset* asset) override;
     void loadArena(ArenaAsset* assetToLoad);
+    Q_INVOKABLE void setCurrentTab(QString name);
+    Q_INVOKABLE void deleteTab(QString name);
+
+    ArenaAsset* getCurrentArena() const;
+
+    QStringList getTabs();
+
+signals:
+    void arenaChanged();
+    void tabUpdateEvent();
 
 protected:
     std::vector<ArenaAsset*> openArenas;

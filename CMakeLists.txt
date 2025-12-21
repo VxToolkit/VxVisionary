@@ -62,6 +62,7 @@ qt_add_qml_module(VxtVisionary
     content/ArenaEditor.qml
     content/components/VxListView.qml
     content/components/VxAssetDialog.qml
+    content/components/VxTabList.qml
 
     RESOURCES
     assets/VXVisionarySplash.png

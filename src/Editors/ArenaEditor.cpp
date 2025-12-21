@@ -53,6 +53,21 @@ void ArenaEditor::openArena() {
 void ArenaEditor::loadArena(ArenaAsset* assetToLoad) {
     qWarning() << "Loading arena asset:" << assetToLoad->getName();
     activeArena = assetToLoad;
+
+    bool alreadyOpen = false;
+    for (auto* arena : openArenas) {
+        if (arena == assetToLoad) {
+            alreadyOpen = true;
+            break;
+        }
+    }
+
+    if (!alreadyOpen) {
+        openArenas.push_back(assetToLoad);
+    }
+
+    emit arenaChanged();
+    emit tabUpdateEvent();
 }
 
 void ArenaEditor::assetRecieved(Asset* asset) {
@@ -61,5 +76,40 @@ void ArenaEditor::assetRecieved(Asset* asset) {
         loadArena(arenaAsset);
     } else {
         QMessageBox::warning(nullptr, "Error", "Please select a new arena asset.");
+    }
+}
+
+ArenaAsset* ArenaEditor::getCurrentArena() const {
+    return activeArena;
+}
+
+QStringList ArenaEditor::getTabs() {
+    QStringList tabNames;
+    for (const auto& arena : openArenas) {
+        tabNames.append(arena->getName());
+    }
+    return tabNames;
+}
+
+void ArenaEditor::setCurrentTab(QString name) {
+    for (const auto& arena : openArenas) {
+        if (arena->getName() == name) {
+            loadArena(arena);
+            return;
+        }
+    }
+}
+
+void ArenaEditor::deleteTab(QString name) {
+    for (auto it = openArenas.begin(); it != openArenas.end(); ++it) {
+        if ((*it)->getName() == name) {
+            openArenas.erase(it);
+            emit tabUpdateEvent();
+            if (activeArena && activeArena->getName() == name) {
+                activeArena = openArenas.empty() ? nullptr : openArenas.front();
+                emit arenaChanged();
+            }
+            return;
+        }
     }
 }

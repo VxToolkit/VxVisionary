@@ -75,7 +75,7 @@ qt_add_qml_module(VxtVisionary
     assets/Workspaces/build.png
     assets/Workspaces/quick-build.png
     assets/Icons/save-icon.png
-    assets/Icons/new-icon.png
+    assets/Icons/new-file.png
     assets/Icons/open-file.png
 
 )

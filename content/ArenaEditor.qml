@@ -41,7 +41,7 @@ Window {
 
             VxToolButton {
                 checkable: false
-                imageSource: "../../assets/Icons/new-icon.png"
+                imageSource: "../../assets/Icons/new-file.png"
                 onVxClicked: {
                     arenaEditor.newArena();
                 }

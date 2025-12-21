@@ -64,9 +64,80 @@ Window {
             }
         }
 
-        Item {
+        Rectangle {
+            id: arenaEditorContainer
             Layout.fillWidth: true
             Layout.fillHeight: true
+            color: "#181818"
+
+            SplitView {
+                anchors.fill: parent
+                orientation: Qt.Horizontal
+
+                Rectangle {
+                    id: canvasContainer
+                    color: "#000000"
+                    SplitView.fillWidth: true
+                    SplitView.minimumWidth: 400
+
+                    Text {
+                        text: "Arena Viewport"
+                        color: "grey"
+                        anchors.centerIn: parent
+                    }
+
+                    Canvas {
+                        id: arenaCanvas
+                        Layout.fillHeight: true
+                    }
+                }
+
+                ColumnLayout {
+                    Layout.fillHeight: true
+                    width: 300
+
+                    implicitWidth: 300
+                    SplitView.minimumWidth: 200
+                    SplitView.maximumWidth: 500
+
+                    TreeView {
+                        id: arenaElementsList
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+
+                    }
+                    Rectangle {
+                        id: arenaElementButtonContainer
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 30
+                        color: "#282828"
+
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: 5
+
+                            VxButton {
+                                text: "+"
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                onVxClicked: {
+                                    arenaEditor.addElementToCurrentArena();
+                                }
+                            }
+
+                            VxButton {
+                                text: "-"
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                onVxClicked: {
+                                    arenaEditor.removeSelectedElementFromCurrentArena();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         }
     }
 }

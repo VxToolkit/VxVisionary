@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 
-Button {
+Item {
     id: vxButton
 
-    property alias buttonText: buttonLabel.text
+    property alias text: buttonLabel.text
     property bool isHighlighted : true
 
     signal vxClicked()
@@ -63,7 +63,8 @@ Button {
             id: buttonLabel
             anchors.centerIn: parent
             color: "white"
-            font.pixelSize: 20
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
     }
 }

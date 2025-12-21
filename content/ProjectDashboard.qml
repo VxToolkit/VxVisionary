@@ -25,6 +25,7 @@ Window {
 
         onAssetSelected: (name) => {
             appController.assetReceived(name)
+            assetPicker.hide()
         }
     }
 
@@ -47,7 +48,7 @@ Window {
 
             dynamicFilter.acceptedType = typeAsInt
 
-            assetPicker.open()
+            assetPicker.show()
         }
     }
 

@@ -2,28 +2,24 @@ import QtQuick
 import QtQuick.Controls
 import VxtVisionary.Models
 
-Dialog {
+Window {
     id: assetDialog
 
     property alias assetModel: assetList.model
     property string selectedAsset: ""
 
     title: "Select Asset"
-    modal: true
-    standardButtons: Dialog.Cancel
-
-    signal assetSelected(string assetName)
-
-    onAccepted: () => {
-        assetSelected(selectedAsset)
-    }
-
-    onRejected: () => {
-        assetSelected("")
-    }
-
+    flags: Qt.Dialog | Qt.WindowStaysOnTopHint
+    modality: Qt.WindowModal
     width: 400
     height: 300
+
+    Rectangle {
+        anchors.fill: parent
+        color: "#202020"
+    }
+
+    signal assetSelected(string assetName)
 
     VxListView {
         id: assetList
@@ -36,7 +32,7 @@ Dialog {
 
         onItemDoubleClicked: (index, name) => {
             selectedAsset = name
-            assetDialog.accept()
+            assetSelected(name)
         }
     }
 }

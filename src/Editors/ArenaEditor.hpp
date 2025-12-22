@@ -24,6 +24,7 @@ public:
     void loadArena(ArenaAsset* assetToLoad);
     Q_INVOKABLE void setCurrentTab(QString name);
     Q_INVOKABLE void deleteTab(QString name);
+    Q_INVOKABLE void addElementToCurrentArena();
 
     ArenaAsset* getCurrentArena() const;
 

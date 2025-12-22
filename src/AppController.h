@@ -26,6 +26,7 @@ public:
     QString getProjectName() const;
 
     void askForAsset(vxEditor* editor, Vxt::AssetType type);
+    void askForGenericElement(vxEditor *editor, std::function<void(QString)> callback, QString title, QStringList data);
 
     void setAssetModel(AssetModel* model);
     AssetModel* assetModel() const;
@@ -35,6 +36,7 @@ public:
     Q_INVOKABLE void openWorkspace(QString name);
     Q_INVOKABLE void saveCurrentProject();
     Q_INVOKABLE void assetReceived(QString name);
+    Q_INVOKABLE void genericElementReceived(QString picker);
 
     std::vector<Asset*>& getAssets() const;
 
@@ -58,6 +60,7 @@ signals:
     void projectNameChanged();
     void assetModelChanged();
     void requestOpenAssetDiag(qint32 type);
+    void requestGenericElementPicker(QString title, QStringList data);
 
 private:
     QString m_statusMessage;
@@ -68,5 +71,6 @@ private:
     static std::vector<vxEditor*> m_openEditors;
     static std::unordered_map<EditorType, QObject*> m_editorWindows;
     vxEditor* m_editorAskedForAsset = nullptr;
+    std::function<void(QString)> m_genericElementReceivedCallback = nullptr;
 
 };

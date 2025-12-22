@@ -216,3 +216,22 @@ void AppController::assetReceived(QString name) {
     m_editorAskedForAsset->assetRecieved(foundAsset);
     m_editorAskedForAsset = nullptr;
 }
+
+void AppController::askForGenericElement(vxEditor* editor, std::function<void(QString)> callback, QString title, QStringList data) {
+    if (m_genericElementReceivedCallback != nullptr) {
+        QMessageBox::critical(nullptr, "Error", "An editor is already requesting a generic element.");
+        return;
+    }
+    m_genericElementReceivedCallback = callback;
+    emit requestGenericElementPicker(title, data);
+}
+
+void AppController::genericElementReceived(QString picker) {
+    if (!m_genericElementReceivedCallback) {
+        QMessageBox::critical(nullptr, "Error", "No editor is requesting a generic element.");
+        return;
+    }
+
+    m_genericElementReceivedCallback(std::move(picker));
+    m_genericElementReceivedCallback = nullptr;
+}

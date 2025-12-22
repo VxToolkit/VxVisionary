@@ -29,6 +29,16 @@ Window {
         }
     }
 
+    VxGenericListDialog {
+        id: genericDialog
+        dialogTitle: "Select an Element"
+
+        onElementSelected: (name) => {
+            appController.genericElementReceived(name)
+            genericDialog.hide()
+        }
+    }
+
     AssetFilterModel {
         id: dynamicFilter
         sourceModel: appController.assetModel
@@ -49,6 +59,12 @@ Window {
             dynamicFilter.acceptedType = typeAsInt
 
             assetPicker.show()
+        }
+
+        function onRequestGenericElementPicker(titleText, elements) {
+            genericDialog.dialogTitle = titleText
+            genericDialog.listModel = elements
+            genericDialog.show()
         }
     }
 

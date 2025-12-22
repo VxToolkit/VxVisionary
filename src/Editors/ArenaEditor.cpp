@@ -113,3 +113,18 @@ void ArenaEditor::deleteTab(QString name) {
         }
     }
 }
+
+void ArenaEditor::addElementToCurrentArena() {
+    if (!activeArena) {
+        QMessageBox::warning(nullptr, "Error", "No active arena to add elements to.");
+        return;
+    }
+    QStringList elements = {"No-Go Zone", "Goal"};
+    m_controller->askForGenericElement(this, [this](QString picker) {
+        if (picker == "No-Go Zone") {
+            qDebug() << "adding no go zone element";
+        } else if (picker == "Goal") {
+            qDebug() << "adding goal element";
+        }
+    }, "Select Element to Add", elements);
+}

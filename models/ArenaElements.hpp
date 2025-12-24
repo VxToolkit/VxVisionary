@@ -9,6 +9,8 @@
 #include "primitives.hpp"
 #include <QString>
 
+#include "ArenaElementRegistry.hpp"
+
 enum class ArenaElementType {
     Null,
     NoGo,
@@ -46,3 +48,6 @@ public:
     void outputData(QDataStream& stream) const override;
     void inputData(QDataStream& stream) override;
 };
+
+REGISTER_ARENA_ELEMENT("No-Go Zone",NoGoElement)
+REGISTER_ARENA_ELEMENT("Goal Element",GoalElement)

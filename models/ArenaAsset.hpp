@@ -16,6 +16,7 @@ public:
     [[nodiscard]] [[nodiscard]] Vxt::AssetType getType() const override;
     void outputData(QDataStream& stream) const override;
     void inputData(QDataStream& stream) override;
+    std::vector<ArenaElement*>& getElements();
 
     void addElement(ArenaElement* element);
 

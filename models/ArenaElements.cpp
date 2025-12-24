@@ -8,6 +8,9 @@
 #include "Asset.hpp"
 #include "CopyUtils.hpp"
 #include <QDataStream>
+#include "ArenaElementRegistry.hpp"
+
+
 
 ArenaElementType NoGoElement::getType() const {
     return ArenaElementType::NoGo;
@@ -50,3 +53,4 @@ void GoalElement::inputData(QDataStream& stream) {
 ArenaElementType GoalElement::getType() const {
     return ArenaElementType::Goal;
 }
+

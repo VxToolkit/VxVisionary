@@ -58,3 +58,7 @@ void ArenaAsset::inputData(QDataStream& stream) {
 void ArenaAsset::addElement(ArenaElement* element) {
     elements.push_back(element);
 }
+
+std::vector<ArenaElement*>& ArenaAsset::getElements() {
+    return elements;
+}

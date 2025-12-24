@@ -11,6 +11,7 @@
 
 #include "AppController.h"
 #include "models/ArenaAsset.hpp"
+#include "models/ArenaElementRegistry.hpp"
 
 EditorType ArenaEditor::type() const {
     return EditorType::Arena;
@@ -23,6 +24,8 @@ ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject
     connect(quickWindow, &QQuickWindow::closing, this, []() {
         AppController::deleteEditorPtr(EditorType::Arena);
     });
+
+    currentElementsModel = new ArenaElementsModel(this);
 }
 
 ArenaEditor::~ArenaEditor() {
@@ -65,9 +68,12 @@ void ArenaEditor::loadArena(ArenaAsset* assetToLoad) {
     if (!alreadyOpen) {
         openArenas.push_back(assetToLoad);
     }
+    currentElementsModel->setArenaAsset(activeArena);
 
     emit arenaChanged();
+    emit elementsChanged();
     emit tabUpdateEvent();
+    currentElementsModel->reset();
 }
 
 void ArenaEditor::assetRecieved(Asset* asset) {
@@ -119,12 +125,31 @@ void ArenaEditor::addElementToCurrentArena() {
         QMessageBox::warning(nullptr, "Error", "No active arena to add elements to.");
         return;
     }
-    QStringList elements = {"No-Go Zone", "Goal"};
+    QStringList elements = ArenaElementRegistry::getRegisteredElementNames();
     m_controller->askForGenericElement(this, [this](QString picker) {
-        if (picker == "No-Go Zone") {
-            qDebug() << "adding no go zone element";
-        } else if (picker == "Goal") {
-            qDebug() << "adding goal element";
+        ArenaElement* newElement = ArenaElementRegistry::createElement(picker.toStdString());
+        if (newElement) {
+            newElement->name = picker;
+            activeArena->addElement(newElement);
+            emit arenaChanged();
+        } else {
+            QMessageBox::warning(nullptr, "Error", "Failed to create the selected element.");
         }
     }, "Select Element to Add", elements);
+    emit elementsChanged();
+    currentElementsModel->reset();
+}
+
+QStringList ArenaEditor::getCurrentArenaElements() const {
+    QStringList elementNames;
+    if (activeArena) {
+        for (const auto& element : activeArena->getElements()) {
+            elementNames.append(element->name);
+        }
+    }
+    return elementNames;
+}
+
+ArenaElementsModel* ArenaEditor::currentElementsModelRead() const {
+    return currentElementsModel;
 }

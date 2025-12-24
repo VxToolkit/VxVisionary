@@ -9,6 +9,7 @@
 #include "vxEditor.hpp"
 #include "models/ArenaAsset.hpp"
 #include "models/ArenaElementsModel.hpp"
+#include "models/ArenaPropertyModel.hpp"
 
 class ArenaEditor : public vxEditor {
     Q_OBJECT
@@ -16,6 +17,7 @@ class ArenaEditor : public vxEditor {
     Q_PROPERTY(QStringList tabs READ getTabs NOTIFY tabUpdateEvent)
     Q_PROPERTY(QStringList currentArenaElements READ getCurrentArenaElements NOTIFY elementsChanged)
     Q_PROPERTY(ArenaElementsModel* currentElementsModel READ currentElementsModelRead NOTIFY elementsChanged)
+    Q_PROPERTY(ArenaPropertyModel* currentPropertyModel READ currentPropertyModelRead NOTIFY arenaPropModelChanged)
 public:
     virtual ~ArenaEditor();
     ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController* controller);
@@ -35,9 +37,11 @@ public:
 
     QStringList getTabs();
     ArenaElementsModel* currentElementsModelRead() const;
+    ArenaPropertyModel* currentPropertyModelRead() const;
 
 signals:
     void arenaChanged();
+    void arenaPropModelChanged();
     void tabUpdateEvent();
     void elementsChanged();
 
@@ -45,4 +49,5 @@ protected:
     std::vector<ArenaAsset*> openArenas;
     ArenaAsset* activeArena;
     ArenaElementsModel* currentElementsModel;
+    ArenaPropertyModel* currentPropertyModel;
 };

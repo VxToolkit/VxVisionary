@@ -100,6 +100,13 @@ Window {
                     SplitView.minimumWidth: 200
                     SplitView.maximumWidth: 500
 
+                    Item {
+                        id: propsContainer
+                        ListView {
+
+                        }
+                    }
+
                     TreeView {
                         id: arenaElementsList
                         Layout.fillHeight: true

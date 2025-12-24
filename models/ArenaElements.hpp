@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <any>
 #include <ostream>
 #include <QDataStream>
 
@@ -17,12 +18,19 @@ enum class ArenaElementType {
     Goal
 };
 
+using ArenaElementProps = std::vector<std::any>;
+using ArenaElementNames = std::vector<QString>;
+
 class ArenaElement {
 public:
     virtual ~ArenaElement() = default;
     [[nodiscard]] virtual ArenaElementType getType() const;
     virtual void outputData(QDataStream& stream) const;
     virtual void inputData(QDataStream& stream);
+
+    virtual ArenaElementProps getProperties() const;
+    virtual ArenaElementNames getPropertyNames() const;
+    virtual void setProperty(int idx, const std::any& value);
 
     QString name;
 };
@@ -36,6 +44,11 @@ public:
 
     void outputData(QDataStream& stream) const override;
     void inputData(QDataStream& stream) override;
+
+    ArenaElementProps getProperties() const override;
+    ArenaElementNames getPropertyNames() const override;
+
+    void setProperty(int idx, const std::any& value) override;
 };
 
 class GoalElement : public ArenaElement {
@@ -47,6 +60,11 @@ public:
 
     void outputData(QDataStream& stream) const override;
     void inputData(QDataStream& stream) override;
+
+    ArenaElementProps getProperties() const override;
+    ArenaElementNames getPropertyNames() const override;
+
+    void setProperty(int idx, const std::any& value) override;
 };
 
 REGISTER_ARENA_ELEMENT("No-Go Zone",NoGoElement)

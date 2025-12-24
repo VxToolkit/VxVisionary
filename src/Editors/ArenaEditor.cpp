@@ -26,6 +26,7 @@ ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject
     });
 
     currentElementsModel = new ArenaElementsModel(this);
+    currentPropertyModel = new ArenaPropertyModel(this);
 }
 
 ArenaEditor::~ArenaEditor() {
@@ -69,9 +70,11 @@ void ArenaEditor::loadArena(ArenaAsset* assetToLoad) {
         openArenas.push_back(assetToLoad);
     }
     currentElementsModel->setArenaAsset(activeArena);
+    currentPropertyModel->setTargetElement(nullptr);
 
     emit arenaChanged();
     emit elementsChanged();
+    emit arenaPropModelChanged();
     emit tabUpdateEvent();
     currentElementsModel->reset();
 }

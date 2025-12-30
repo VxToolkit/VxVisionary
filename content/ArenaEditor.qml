@@ -100,11 +100,15 @@ Window {
                     SplitView.minimumWidth: 200
                     SplitView.maximumWidth: 500
 
-                    Item {
-                        id: propsContainer
-                        ListView {
+                    VxPropInspector {
+                        id: propertyInspector
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
-                        }
+                        inspectorModel: arenaEditor.currentPropertyModel
+                    }
+                    Rectangle {
+                        Layout.fillWidth: true; height: 1; color: "#303030"
                     }
 
                     TreeView {

@@ -35,6 +35,24 @@ Window {
 
     }
 
+    MenuBar {
+        Menu {
+            title: "File"
+            MenuItem {
+                text: "Exit"
+                onTriggered: {
+                    Qt.quit()
+                }
+            }
+            MenuItem {
+                text: "Load from file..."
+                onTriggered: {
+                    appController.loadProjectFromFile()
+                }
+            }
+        }
+    }
+
     Text {
         id: titleText
         text: "Select a project to continue"

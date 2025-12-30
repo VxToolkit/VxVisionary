@@ -71,6 +71,7 @@ qt_add_qml_module(VxtVisionary
     content/components/VxTabList.qml
     content/components/VxGenericListDialog.qml
     content/components/VxStrListView.qml
+    content/components/VxPropInspector.qml
 
     RESOURCES
     assets/VXVisionarySplash.png

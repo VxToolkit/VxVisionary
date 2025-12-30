@@ -18,8 +18,6 @@ EditorType ArenaEditor::type() const {
 }
 
 ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController *controller) : vxEditor(parent, engine, window, controller) {
-    m_engine->rootContext()->setContextProperty("arenaEditor", this);
-    m_window->setProperty("visible", true);
     QQuickWindow *quickWindow = qobject_cast<QQuickWindow*>(m_window);
     connect(quickWindow, &QQuickWindow::closing, this, []() {
         AppController::deleteEditorPtr(EditorType::Arena);
@@ -30,7 +28,6 @@ ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject
 }
 
 ArenaEditor::~ArenaEditor() {
-    m_window->setProperty("visible", false);
 }
 
 void ArenaEditor::newArena() const {
@@ -132,15 +129,16 @@ void ArenaEditor::addElementToCurrentArena() {
     m_controller->askForGenericElement(this, [this](QString picker) {
         ArenaElement* newElement = ArenaElementRegistry::createElement(picker.toStdString());
         if (newElement) {
+            qDebug() << "adding new element " << picker;
             newElement->name = picker;
             activeArena->addElement(newElement);
             emit arenaChanged();
         } else {
             QMessageBox::warning(nullptr, "Error", "Failed to create the selected element.");
         }
+        emit elementsChanged();
+        currentElementsModel->reset();
     }, "Select Element to Add", elements);
-    emit elementsChanged();
-    currentElementsModel->reset();
 }
 
 QStringList ArenaEditor::getCurrentArenaElements() const {
@@ -150,9 +148,17 @@ QStringList ArenaEditor::getCurrentArenaElements() const {
             elementNames.append(element->name);
         }
     }
+    for (const auto& name : elementNames) {
+        qDebug() << "Element: " << name;
+    }
     return elementNames;
 }
 
 ArenaElementsModel* ArenaEditor::currentElementsModelRead() const {
     return currentElementsModel;
+}
+
+
+ArenaPropertyModel* ArenaEditor::currentPropertyModelRead() const {
+    return currentPropertyModel;
 }

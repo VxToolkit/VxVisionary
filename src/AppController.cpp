@@ -33,20 +33,20 @@ AppController::AppController(QQmlApplicationEngine* engine, QObject* parent) : Q
     const QUrl mainQML(u"qrc:/qt/qml/Main/content/Main.qml"_s);
     m_engine->load(mainQML);
 
-    QQmlComponent arenaEditorComponent(m_engine, QUrl(QStringLiteral("qrc:/qt/qml/Main/content/ArenaEditor.qml")));
+    // QQmlComponent arenaEditorComponent(m_engine, QUrl(QStringLiteral("qrc:/qt/qml/Main/content/ArenaEditor.qml")));
 
     m_assetModel = new AssetModel(this, this);
     setAssetModel(m_assetModel);
 
-    QObject* arenaEditorWindow = arenaEditorComponent.create();
+    // QObject* arenaEditorWindow = arenaEditorComponent.create();
 
-    if (!arenaEditorWindow) {
-        qWarning() << "Error creating window:" << arenaEditorComponent.errorString();
-        return;
-    }
+    // if (!arenaEditorWindow) {
+    //     qWarning() << "Error creating window:" << arenaEditorComponent.errorString();
+    //     return;
+    // }
 
-    arenaEditorWindow->setProperty("visible", false);
-    m_editorWindows[EditorType::Arena] = arenaEditorWindow;
+    // arenaEditorWindow->setProperty("visible", false);
+    // m_editorWindows[EditorType::Arena] = arenaEditorWindow;
 }
 
 ProjectModel* AppController::projectModel() {
@@ -119,16 +119,21 @@ void AppController::openWorkspace(QString name) {
     if (name == "Arena Editor") {
         ArenaEditor* editorFound = getEditorOfType<ArenaEditor>(EditorType::Arena);
         if (editorFound) {
-            QMessageBox::critical(nullptr, "Could not open workspace.", "An arena editor window is already open.");
-            return;
-        }
-        QObject *window = m_editorWindows[EditorType::Arena];
-        if (window == nullptr) {
-            QMessageBox::critical(nullptr, "Could not open workspace.", "The arena editor window could not be found.");
+            QMessageBox::critical(nullptr, "Error", "Window already open.");
             return;
         }
 
+        QQmlComponent component(m_engine, QUrl("qrc:/qt/qml/Main/content/ArenaEditor.qml"));
+        QObject* window = component.create();
+
+        if (!window) {
+            qWarning() << "Failed to create window:" << component.errorString();
+            return;
+        }
+        m_editorWindows[EditorType::Arena] = window;
         ArenaEditor* arenaEditor = new ArenaEditor(this, m_engine, window, this);
+        m_engine->rootContext()->setContextProperty("arenaEditor", arenaEditor);
+
         m_openEditors.push_back(arenaEditor);
     }
 }
@@ -152,6 +157,7 @@ void AppController::deleteEditorPtr(EditorType type) {
             }
             return false;
         }), m_openEditors.end());
+    m_editorWindows.erase(type);
 }
 
 std::vector<Asset*> AppController::getAssetsOfType(Vxt::AssetType type) const {
@@ -234,4 +240,12 @@ void AppController::genericElementReceived(QString picker) {
 
     m_genericElementReceivedCallback(std::move(picker));
     m_genericElementReceivedCallback = nullptr;
+}
+
+void AppController::loadProjectFromFile() {
+    QString fileName = QFileDialog::getOpenFileName(nullptr, "Open Project", QDir::homePath(), "VxTemplate Project Files (*.vxtemplate)");
+    if (fileName.isEmpty()) {
+        return;
+    }
+    loadProject(fileName);
 }

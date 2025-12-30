@@ -37,6 +37,7 @@ public:
     Q_INVOKABLE void saveCurrentProject();
     Q_INVOKABLE void assetReceived(QString name);
     Q_INVOKABLE void genericElementReceived(QString picker);
+    Q_INVOKABLE void loadProjectFromFile();
 
     std::vector<Asset*>& getAssets() const;
 

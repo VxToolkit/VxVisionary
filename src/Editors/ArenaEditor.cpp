@@ -158,7 +158,6 @@ ArenaElementsModel* ArenaEditor::currentElementsModelRead() const {
     return currentElementsModel;
 }
 
-
 ArenaPropertyModel* ArenaEditor::currentPropertyModelRead() const {
     return currentPropertyModel;
 }

@@ -117,11 +117,13 @@ Window {
                         Layout.fillWidth: true
                         model: arenaEditor.currentElementsModel
 
-                        columnWidthProvider: function (column) { return width }
+                        columnWidthProvider: function (column) {
+                            return Math.max(200, arenaElementsList.width)
+                        }
 
                         delegate: Item {
                             width: arenaElementsList.width
-                            implicitHeight: label.implicitHeight * 1.5
+                            implicitHeight: Math.max(30, label.implicitHeight * 1.5)
 
                             readonly property real indent: 20
                             readonly property real padding: 5
@@ -134,13 +136,15 @@ Window {
                             Rectangle {
                                 id: bgRect
                                 anchors.fill: parent
-                                color: parent.selected ? "#a82828" : "transparent"
+                                //color: "transparent"
+                                color: "#ff0000"
                             }
 
                             Text {
                                 id: label
                                 text: parent.display
                                 color: "white"
+                                font.pixelSize: 14
                                 x: padding + (parent.depth * parent.indent)
                                 anchors.verticalCenter: parent.verticalCenter
                             }
@@ -148,6 +152,7 @@ Window {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
+                                    arenaEditor.selectElementAtIndex(index);
                                 }
                             }
                         }

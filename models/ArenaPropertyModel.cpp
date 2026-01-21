@@ -15,11 +15,13 @@ int ArenaPropertyModel::rowCount(const QModelIndex &parent) const {
     return static_cast<int>(names.size());
 }
 
-QString ArenaPropertyModel::getPropTypeName(std::any& props) const {
+QString ArenaPropertyModel::getPropTypeName(std::any& props) {
     if (props.type() == typeid(int)) {
         return "int";
     } else if (props.type() == typeid(float)) {
         return "float";
+    } else if (props.type() == typeid(double)) {
+        return "double";
     } else if (props.type() == typeid(QString)) {
         return "string";
     }
@@ -43,6 +45,8 @@ QVariant ArenaPropertyModel::data(const QModelIndex &index, int role) const {
             return std::any_cast<int>(currentProp);
         } else if (currentProp.type() == typeid(float)) {
             return std::any_cast<float>(currentProp);
+        } else if (currentProp.type() == typeid(double)) {
+            return std::any_cast<double>(currentProp);
         } else if (currentProp.type() == typeid(QString)) {
             return std::any_cast<QString>(currentProp);
         }
@@ -79,6 +83,8 @@ bool ArenaPropertyModel::setData(const QModelIndex &index, const QVariant &value
             targetAsset->setProperty(index.row(), value.toInt());
         } else if (currentProp.type() == typeid(float)) {
             targetAsset->setProperty(index.row(), value.toFloat());
+        } else if (currentProp.type() == typeid(double)) {
+            targetAsset->setProperty(index.row(), value.toDouble());
         } else if (currentProp.type() == typeid(QString)) {
             targetAsset->setProperty(index.row(), value.toString());
         } else {

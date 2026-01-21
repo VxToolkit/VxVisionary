@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
+import VxtVisionary.Components
 
 Window {
     id: window
@@ -74,22 +75,11 @@ Window {
                 anchors.fill: parent
                 orientation: Qt.Horizontal
 
-                Rectangle {
-                    id: canvasContainer
-                    color: "#000000"
+                EditorCanvas {
                     SplitView.fillWidth: true
                     SplitView.minimumWidth: 400
-
-                    Text {
-                        text: "Arena Viewport"
-                        color: "grey"
-                        anchors.centerIn: parent
-                    }
-
-                    Canvas {
-                        id: arenaCanvas
-                        Layout.fillHeight: true
-                    }
+                    id: arenaCanvas
+                    Layout.fillHeight: true
                 }
 
                 ColumnLayout {
@@ -152,7 +142,7 @@ Window {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    arenaEditor.selectElementAtIndex(index);
+                                    arenaEditor.selectElementAtIndex(row);
                                 }
                             }
                         }

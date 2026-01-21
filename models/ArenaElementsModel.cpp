@@ -54,6 +54,12 @@ QVariant ArenaElementsModel::data(const QModelIndex& index, int role) const {
     return {};
 }
 
+QHash<int, QByteArray> ArenaElementsModel::roleNames() const {
+    QHash<int, QByteArray> roles;
+    roles[Qt::DisplayRole] = "display";
+    return roles;
+}
+
 void ArenaElementsModel::setArenaAsset(ArenaAsset* arenaAsset) {
     beginResetModel();
     m_arenaAsset = arenaAsset;

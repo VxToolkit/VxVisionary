@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Basic
 import QtQuick.Layouts
 
 Rectangle {
@@ -54,7 +54,7 @@ Rectangle {
                 id: numberEditor
                 TextField {
                     property var originalValue
-                    text: originalValue.toString()
+                    text: (originalValue !== undefined && originalValue !== null) ? originalValue.toString() : ""
                     color: "white"
                     font.pixelSize: 14
                     background: Rectangle {
@@ -73,7 +73,7 @@ Rectangle {
                 id: stringEditor
                 TextField {
                     property var originalValue
-                    text: originalValue.toString()
+                    text: (originalValue !== undefined && originalValue !== null) ? originalValue.toString() : ""
                     color: "white"
                     font.pixelSize: 14
                     background: Rectangle {

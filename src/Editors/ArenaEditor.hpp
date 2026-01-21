@@ -27,9 +27,11 @@ public:
     EditorType type() const override;
     void assetRecieved(Asset* asset) override;
     void loadArena(ArenaAsset* assetToLoad);
-    Q_INVOKABLE void setCurrentTab(QString name);
-    Q_INVOKABLE void deleteTab(QString name);
+    Q_INVOKABLE void setCurrentTab(int index);
+    Q_INVOKABLE void deleteTab(int index);
     Q_INVOKABLE void addElementToCurrentArena();
+    Q_INVOKABLE void selectElementAtIndex(int index);
+    Q_INVOKABLE void removeSelectedElementFromCurrentArena();
 
     QStringList getCurrentArenaElements() const;
 
@@ -50,4 +52,5 @@ protected:
     ArenaAsset* activeArena;
     ArenaElementsModel* currentElementsModel;
     ArenaPropertyModel* currentPropertyModel;
+    int selectedElementIndex = -1;
 };

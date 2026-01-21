@@ -12,6 +12,7 @@
 #include "QMessageBox"
 #include "Editors/ArenaEditor.hpp"
 #include "models/Assets/AssetFilterModel.hpp"
+#include "EditorCanvas.hpp"
 
 using namespace Qt::StringLiterals;
 
@@ -29,6 +30,8 @@ AppController::AppController(QQmlApplicationEngine* engine, QObject* parent) : Q
     "AssetType",
     "Error: Cannot create enum"
     );
+
+    qmlRegisterType<EditorCanvas>("VxtVisionary.Components", 1, 0, "EditorCanvas");
 
     const QUrl mainQML(u"qrc:/qt/qml/Main/content/Main.qml"_s);
     m_engine->load(mainQML);

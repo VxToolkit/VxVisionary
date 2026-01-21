@@ -17,6 +17,7 @@ public:
     [[nodiscard]] int rowCount(const QModelIndex& parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex& parent) const override;
     [[nodiscard]] QVariant data(const QModelIndex& index, int role) const override;
+    QHash<int, QByteArray> roleNames() const override;
     void setArenaAsset(ArenaAsset* arenaAsset);
     void reset();
 

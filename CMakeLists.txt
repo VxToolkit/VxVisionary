@@ -43,6 +43,8 @@ qt_add_executable(VxtVisionary
     models/ArenaElementsModel.hpp
     models/ArenaPropertyModel.cpp
     models/ArenaPropertyModel.hpp
+    src/EditorCanvas.cpp
+    src/EditorCanvas.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)

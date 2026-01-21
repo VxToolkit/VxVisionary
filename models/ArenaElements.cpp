@@ -5,7 +5,7 @@
 #include "ArenaElements.hpp"
 
 #include "ArenaAsset.hpp"
-#include "Asset.hpp"
+//#include "Asset.hpp"
 #include "CopyUtils.hpp"
 #include <QDataStream>
 #include "ArenaElementRegistry.hpp"
@@ -22,7 +22,6 @@ ArenaElementType ArenaElement::getType() const {
 
 
 void ArenaElement::outputData(QDataStream& stream) const {
-    stream << static_cast<int>(getType());
     stream << name;
 }
 
@@ -77,16 +76,16 @@ ArenaElementNames NoGoElement::getPropertyNames() const {
 void NoGoElement::setProperty(int idx, const std::any& value) {
     switch (idx) {
         case 0:
-            transforms.position.x = std::any_cast<float>(value);
+            transforms.position.x = std::any_cast<double>(value);
             break;
         case 1:
-            transforms.position.y = std::any_cast<float>(value);
+            transforms.position.y = std::any_cast<double>(value);
             break;
         case 2:
-            transforms.scale.x = std::any_cast<float>(value);
+            transforms.scale.x = std::any_cast<double>(value);
             break;
         case 3:
-            transforms.scale.y = std::any_cast<float>(value);
+            transforms.scale.y = std::any_cast<double>(value);
             break;
         default:
             break;
@@ -104,10 +103,10 @@ ArenaElementNames GoalElement::getPropertyNames() const {
 void GoalElement::setProperty(int idx, const std::any& value) {
     switch (idx) {
         case 0:
-            position.x = std::any_cast<float>(value);
+            position.x = std::any_cast<double>(value);
             break;
         case 1:
-            position.y = std::any_cast<float>(value);
+            position.y = std::any_cast<double>(value);
             break;
         default:
             break;

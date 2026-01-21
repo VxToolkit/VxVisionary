@@ -17,8 +17,9 @@ EditorType ArenaEditor::type() const {
     return EditorType::Arena;
 }
 
-ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController *controller) : vxEditor(parent, engine, window, controller) {
-    QQuickWindow *quickWindow = qobject_cast<QQuickWindow*>(m_window);
+ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController *controller)
+    : vxEditor(parent, engine, window, controller), activeArena(nullptr) {
+    auto *quickWindow = qobject_cast<QQuickWindow*>(m_window);
     connect(quickWindow, &QQuickWindow::closing, this, []() {
         AppController::deleteEditorPtr(EditorType::Arena);
     });
@@ -27,8 +28,7 @@ ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject
     currentPropertyModel = new ArenaPropertyModel(this);
 }
 
-ArenaEditor::~ArenaEditor() {
-}
+ArenaEditor::~ArenaEditor() = default;
 
 void ArenaEditor::newArena() const {
     bool ok;
@@ -45,6 +45,7 @@ void ArenaEditor::newArena() const {
         ArenaAsset *newArena = new ArenaAsset(newName, {100,100});
         m_controller->currentLoadedProject()->addAsset(dynamic_cast<Asset*>(newArena));
     }
+    currentElementsModel->reset();
 }
 
 void ArenaEditor::openArena() {
@@ -97,25 +98,30 @@ QStringList ArenaEditor::getTabs() {
     return tabNames;
 }
 
-void ArenaEditor::setCurrentTab(QString name) {
-    for (const auto& arena : openArenas) {
-        if (arena->getName() == name) {
-            loadArena(arena);
-            return;
-        }
+void ArenaEditor::setCurrentTab(int index) {
+    if (index >= 0 && index < static_cast<int>(openArenas.size())) {
+        loadArena(openArenas.at(index));
     }
 }
 
-void ArenaEditor::deleteTab(QString name) {
-    for (auto it = openArenas.begin(); it != openArenas.end(); ++it) {
-        if ((*it)->getName() == name) {
-            openArenas.erase(it);
-            emit tabUpdateEvent();
-            if (activeArena && activeArena->getName() == name) {
-                activeArena = openArenas.empty() ? nullptr : openArenas.front();
+void ArenaEditor::deleteTab(int index) {
+    if (index >= 0 && index < static_cast<int>(openArenas.size())) {
+        ArenaAsset* toRemove = openArenas.at(index);
+        openArenas.erase(openArenas.begin() + index);
+        emit tabUpdateEvent();
+
+        if (toRemove == activeArena) {
+            if (!openArenas.empty()) {
+                int newIndex = std::min(index, static_cast<int>(openArenas.size()) - 1);
+                loadArena(openArenas.at(newIndex));
+            } else {
+                activeArena = nullptr;
+                currentElementsModel->setArenaAsset(nullptr);
+                currentPropertyModel->setTargetElement(nullptr);
                 emit arenaChanged();
+                emit elementsChanged();
+                emit arenaPropModelChanged();
             }
-            return;
         }
     }
 }
@@ -126,7 +132,7 @@ void ArenaEditor::addElementToCurrentArena() {
         return;
     }
     QStringList elements = ArenaElementRegistry::getRegisteredElementNames();
-    m_controller->askForGenericElement(this, [this](QString picker) {
+    m_controller->askForGenericElement(this, [this](const QString& picker) {
         ArenaElement* newElement = ArenaElementRegistry::createElement(picker.toStdString());
         if (newElement) {
             qDebug() << "adding new element " << picker;
@@ -139,6 +145,34 @@ void ArenaEditor::addElementToCurrentArena() {
         emit elementsChanged();
         currentElementsModel->reset();
     }, "Select Element to Add", elements);
+}
+
+void ArenaEditor::selectElementAtIndex(int index) {
+    if (!activeArena || index < 0 || index >= static_cast<int>(activeArena->getElements().size())) {
+        selectedElementIndex = -1;
+        currentPropertyModel->setTargetElement(nullptr);
+        return;
+    }
+
+    selectedElementIndex = index;
+    ArenaElement* element = activeArena->getElements().at(static_cast<size_t>(index));
+    currentPropertyModel->setTargetElement(element);
+}
+
+void ArenaEditor::removeSelectedElementFromCurrentArena() {
+    if (!activeArena || selectedElementIndex < 0 || selectedElementIndex >= static_cast<int>(activeArena->getElements().size())) {
+        return;
+    }
+
+    auto& elements = activeArena->getElements();
+    elements.erase(elements.begin() + selectedElementIndex);
+
+    selectedElementIndex = -1;
+    currentPropertyModel->setTargetElement(nullptr);
+
+    emit elementsChanged();
+    emit arenaChanged();
+    currentElementsModel->reset(); // refresh list
 }
 
 QStringList ArenaEditor::getCurrentArenaElements() const {

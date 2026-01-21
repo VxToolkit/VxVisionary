@@ -39,6 +39,19 @@ void NoGoElement::inputData(QDataStream& stream) {
     transforms = CopyUtils::readTransforms2D(stream);
 }
 
+void NoGoElement::draw(QPainter* painter) {
+    painter->save();
+    painter->translate(transforms.position.x, transforms.position.y);
+    painter->scale(transforms.scale.x, transforms.scale.y);
+
+    // hatch
+    QBrush hatchBrush(Qt::red, Qt::DiagCrossPattern);
+    painter->setBrush(hatchBrush);
+
+    painter->drawRect(-10, -10, 20, 20);
+    painter->restore();
+}
+
 void GoalElement::outputData(QDataStream& stream) const {
     ArenaElement::outputData(stream);
     CopyUtils::writeVec2(position, stream);
@@ -47,6 +60,14 @@ void GoalElement::outputData(QDataStream& stream) const {
 void GoalElement::inputData(QDataStream& stream) {
     ArenaElement::inputData(stream);
     position = CopyUtils::readVec2(stream);
+}
+
+void GoalElement::draw(QPainter* painter) {
+    painter->save();
+    painter->translate(position.x, position.y);
+    painter->setBrush(QBrush(Qt::yellow));
+    painter->drawEllipse(-10, -10, 20, 20);
+    painter->restore();
 }
 
 ArenaElementProps ArenaElement::getProperties() const {

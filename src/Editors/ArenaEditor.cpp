@@ -18,11 +18,15 @@ EditorType ArenaEditor::type() const {
 }
 
 ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController *controller)
-    : vxEditor(parent, engine, window, controller), activeArena(nullptr) {
+    : vxEditor(parent, engine, window, controller), activeArena(nullptr), editorCanvas(nullptr) {
     auto *quickWindow = qobject_cast<QQuickWindow*>(m_window);
     connect(quickWindow, &QQuickWindow::closing, this, []() {
         AppController::deleteEditorPtr(EditorType::Arena);
     });
+
+    if (engine && engine->rootContext()) {
+        engine->rootContext()->setContextProperty("arenaEditor", this);
+    }
 
     currentElementsModel = new ArenaElementsModel(this);
     currentPropertyModel = new ArenaPropertyModel(this);
@@ -46,6 +50,29 @@ void ArenaEditor::newArena() const {
         m_controller->currentLoadedProject()->addAsset(dynamic_cast<Asset*>(newArena));
     }
     currentElementsModel->reset();
+}
+
+void ArenaEditor::canvasReady(EditorCanvas* canvas) {
+    qDebug() << "The canvas is ready!";
+    editorCanvas = canvas;
+
+    editorCanvas->setDrawableProvider([this]() {
+        std::vector<CanvasDrawable*> drawables;
+        if (activeArena) {
+            for (auto& element : activeArena->getElements()) {
+                drawables.push_back(element);
+            }
+        }
+        return drawables;
+    });
+
+    connect(this, &ArenaEditor::arenaChanged, editorCanvas, &QQuickItem::update);
+    connect(this, &ArenaEditor::elementsChanged, editorCanvas, &QQuickItem::update);
+    connect(currentPropertyModel, &QAbstractListModel::dataChanged, editorCanvas, [this]() {
+        qDebug() << "Property model data changed";
+        if (editorCanvas) editorCanvas->update();
+    });
+
 }
 
 void ArenaEditor::openArena() {

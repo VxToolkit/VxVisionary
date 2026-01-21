@@ -43,8 +43,8 @@ qt_add_executable(VxtVisionary
     models/ArenaElementsModel.hpp
     models/ArenaPropertyModel.cpp
     models/ArenaPropertyModel.hpp
-    src/EditorCanvas.cpp
-    src/EditorCanvas.hpp
+    src/CanvasDrawable.cpp
+    src/CanvasDrawable.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)
@@ -59,6 +59,8 @@ qt_add_qml_module(VxtVisionary
     SOURCES
     src/AppController.cpp
     src/AppController.h
+    src/EditorCanvas.cpp
+    src/EditorCanvas.hpp
 
     QML_FILES
     content/Main.qml

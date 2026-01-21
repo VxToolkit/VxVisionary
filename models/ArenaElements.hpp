@@ -11,6 +11,7 @@
 #include <QString>
 
 #include "ArenaElementRegistry.hpp"
+#include "CanvasDrawable.hpp"
 
 enum class ArenaElementType {
     Null,
@@ -21,7 +22,7 @@ enum class ArenaElementType {
 using ArenaElementProps = std::vector<std::any>;
 using ArenaElementNames = std::vector<QString>;
 
-class ArenaElement {
+class ArenaElement : public virtual CanvasDrawable {
 public:
     virtual ~ArenaElement() = default;
     [[nodiscard]] virtual ArenaElementType getType() const;
@@ -49,6 +50,8 @@ public:
     ArenaElementNames getPropertyNames() const override;
 
     void setProperty(int idx, const std::any& value) override;
+
+    void draw(QPainter* painter) override;
 };
 
 class GoalElement : public ArenaElement {
@@ -65,6 +68,7 @@ public:
     ArenaElementNames getPropertyNames() const override;
 
     void setProperty(int idx, const std::any& value) override;
+    void draw(QPainter* painter) override;
 };
 
 REGISTER_ARENA_ELEMENT("No-Go Zone",NoGoElement)

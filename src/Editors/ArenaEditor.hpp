@@ -10,6 +10,7 @@
 #include "models/ArenaAsset.hpp"
 #include "models/ArenaElementsModel.hpp"
 #include "models/ArenaPropertyModel.hpp"
+#include "EditorCanvas.hpp"
 
 class ArenaEditor : public vxEditor {
     Q_OBJECT
@@ -32,6 +33,7 @@ public:
     Q_INVOKABLE void addElementToCurrentArena();
     Q_INVOKABLE void selectElementAtIndex(int index);
     Q_INVOKABLE void removeSelectedElementFromCurrentArena();
+    Q_INVOKABLE void canvasReady(EditorCanvas* canvas);
 
     QStringList getCurrentArenaElements() const;
 
@@ -53,4 +55,6 @@ protected:
     ArenaElementsModel* currentElementsModel;
     ArenaPropertyModel* currentPropertyModel;
     int selectedElementIndex = -1;
+    EditorCanvas* editorCanvas;
+
 };

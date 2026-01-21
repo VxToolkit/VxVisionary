@@ -80,6 +80,10 @@ Window {
                     SplitView.minimumWidth: 400
                     id: arenaCanvas
                     Layout.fillHeight: true
+
+                    Component.onCompleted: {
+                        arenaEditor.canvasReady(arenaCanvas)
+                    }
                 }
 
                 ColumnLayout {

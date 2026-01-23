@@ -9,10 +9,11 @@
 
 
 class ArenaAsset : public Asset {
+    Q_OBJECT
 public:
 
-    ArenaAsset(QString name,Vec2 bounds);
-    ArenaAsset(QDataStream* stream);
+    ArenaAsset(QString name, Vec2 bounds, QObject* parent = nullptr);
+    ArenaAsset(QDataStream* stream, QObject* parent = nullptr);
     [[nodiscard]] Vxt::AssetType getType() const override;
     void outputData(QDataStream& stream) const override;
     void inputData(QDataStream& stream) override;
@@ -24,4 +25,3 @@ protected:
     std::vector<ArenaElement*> elements;
     Vec2 bounds;
 };
-

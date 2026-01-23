@@ -24,8 +24,12 @@ ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject
         AppController::deleteEditorPtr(EditorType::Arena);
     });
 
+    qDebug() << "Testing engine pointer:" << engine;
+    if (engine) qDebug() << "Testing rootContext:" << engine->rootContext();
+    qDebug() << "Testing 'this' pointer:" << this;
+
     if (engine && engine->rootContext()) {
-        engine->rootContext()->setContextProperty("arenaEditor", this);
+
     }
 
     currentElementsModel = new ArenaElementsModel(this);

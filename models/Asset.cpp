@@ -18,7 +18,7 @@ void Asset::inputData(QDataStream& stream) {
     stream >> name;
 }
 
-Asset::Asset(QString name) : name(std::move(name)) {}
+Asset::Asset(QString name, QObject* parent) : QObject(parent), name(std::move(name)) {}
 
 unsigned int Asset::getLoadedInstances() const {
     return loadedInstances;

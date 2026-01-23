@@ -70,8 +70,14 @@ void AppController::loadProject(const QString &projectPath) {
 
         Project::addRecentProject(projectPath.toStdString());
 
+        auto oldRootObjects = m_engine->rootObjects();
+
         QUrl dashboardQML(QStringLiteral("qrc:/qt/qml/Main/content/ProjectDashboard.qml"));
         m_engine->load(dashboardQML);
+
+        for (QObject *obj : oldRootObjects) {
+            obj->deleteLater();
+        }
 
         QObject *found_object = m_engine->rootObjects().first();
         QMetaObject::invokeMethod(found_object, "close");
@@ -135,6 +141,7 @@ void AppController::openWorkspace(QString name) {
         }
         m_editorWindows[EditorType::Arena] = window;
         ArenaEditor* arenaEditor = new ArenaEditor(this, m_engine, window, this);
+
         m_engine->rootContext()->setContextProperty("arenaEditor", arenaEditor);
 
         m_openEditors.push_back(arenaEditor);

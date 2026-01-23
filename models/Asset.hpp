@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <QObject>
 #include <QString>
 
 namespace Vxt
@@ -15,10 +16,11 @@ namespace Vxt
     Q_ENUM_NS(AssetType)
 }
 
-class Asset {
+class Asset : public QObject {
+    Q_OBJECT
 public:
     virtual ~Asset() = default;
-    explicit Asset(QString name);
+    explicit Asset(QString name, QObject* parent = nullptr);
 
     QString getName();
     virtual void outputData(QDataStream& stream) const;
@@ -34,4 +36,3 @@ protected:
     QString name;
     unsigned int loadedInstances = 0;
 };
-

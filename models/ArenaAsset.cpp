@@ -12,9 +12,9 @@ Vxt::AssetType ArenaAsset::getType() const {
     return Vxt::AssetType::Arena;
 }
 
-ArenaAsset::ArenaAsset(QString name, Vec2 bounds) : Asset(std::move(name)), bounds(bounds) {}
+ArenaAsset::ArenaAsset(QString name, Vec2 bounds, QObject* parent) : Asset(std::move(name), parent), bounds(bounds) {}
 
-ArenaAsset::ArenaAsset(QDataStream* stream) : Asset("") {
+ArenaAsset::ArenaAsset(QDataStream* stream, QObject* parent) : Asset("", parent) {
     ArenaAsset::inputData(*stream);
 }
 

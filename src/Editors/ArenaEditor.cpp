@@ -222,3 +222,22 @@ ArenaElementsModel* ArenaEditor::currentElementsModelRead() const {
 ArenaPropertyModel* ArenaEditor::currentPropertyModelRead() const {
     return currentPropertyModel;
 }
+
+void ArenaEditor::selectElement(int index) {
+    if (!activeArena) {
+        QMessageBox::warning(nullptr, "Error", "No active arena to select elements from.");
+        return;
+    }
+    if (index < 0 || index >= static_cast<int>(activeArena->getElements().size())) {
+        QMessageBox::warning(nullptr, "Error", "The selected element idx is not inbounds.");
+        return;
+    }
+    ArenaElement* selectedElement = activeArena->getElements().at(static_cast<size_t>(index));
+    currentPropertyModel->setTargetElement(selectedElement);
+    this->selectedElement = selectedElement;
+    emit arenaPropModelChanged();
+}
+
+ArenaElement* ArenaEditor::getSelectedElement() const {
+    return selectedElement;
+}

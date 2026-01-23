@@ -19,6 +19,13 @@ Window {
         color: "#202020"
     }
 
+    onClosing: (close) => {
+        if (assetDialog.visible) {
+            selectedAsset = ""
+            assetSelected("")
+            close.accept()
+        }
+    }
     signal assetSelected(string assetName)
 
     VxListView {

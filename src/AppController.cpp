@@ -223,7 +223,7 @@ void AppController::assetReceived(QString name) {
         }
     }
 
-    if (!foundAsset) {
+    if (!foundAsset && !name.isEmpty()) {
         QMessageBox::critical(nullptr, "Error", "The requested asset could not be found.");
         m_editorAskedForAsset = nullptr;
         return;

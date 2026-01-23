@@ -6,10 +6,15 @@
 #include <QPainter>
 #include <utility>
 
-EditorCanvas::EditorCanvas(QQuickItem* parent) : QQuickPaintedItem(parent) {}
+EditorCanvas::EditorCanvas(QQuickItem* parent) : QQuickPaintedItem(parent) {
+    setImplicitWidth(600);
+    setImplicitHeight(600);
+}
 
 void EditorCanvas::paint(QPainter* painter) {
+    painter->fillRect(boundingRect(), QColor(16, 16, 16)); // Background
     painter->setRenderHint(QPainter::Antialiasing);
+
     if (drawableProvider) {
         auto drawables = drawableProvider();
         for (auto& drawable : drawables) {

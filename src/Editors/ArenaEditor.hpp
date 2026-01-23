@@ -42,6 +42,8 @@ public:
     QStringList getTabs();
     ArenaElementsModel* currentElementsModelRead() const;
     ArenaPropertyModel* currentPropertyModelRead() const;
+    void selectElement(int index);
+    ArenaElement* getSelectedElement() const;
 
 signals:
     void arenaChanged();

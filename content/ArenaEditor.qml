@@ -76,10 +76,10 @@ Window {
                 orientation: Qt.Horizontal
 
                 EditorCanvas {
+                    SplitView.preferredWidth: 600
                     SplitView.fillWidth: true
                     SplitView.minimumWidth: 400
                     id: arenaCanvas
-                    Layout.fillHeight: true
 
                     Component.onCompleted: {
                         arenaEditor.canvasReady(arenaCanvas)

@@ -24,14 +24,6 @@ ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject
         AppController::deleteEditorPtr(EditorType::Arena);
     });
 
-    qDebug() << "Testing engine pointer:" << engine;
-    if (engine) qDebug() << "Testing rootContext:" << engine->rootContext();
-    qDebug() << "Testing 'this' pointer:" << this;
-
-    if (engine && engine->rootContext()) {
-
-    }
-
     currentElementsModel = new ArenaElementsModel(this);
     currentPropertyModel = new ArenaPropertyModel(this);
 }
@@ -238,10 +230,10 @@ void ArenaEditor::selectElement(int index) {
     }
     ArenaElement* selectedElement = activeArena->getElements().at(static_cast<size_t>(index));
     currentPropertyModel->setTargetElement(selectedElement);
-    this->selectedElement = selectedElement;
+    selectedElementIndex = index;
     emit arenaPropModelChanged();
 }
 
 ArenaElement* ArenaEditor::getSelectedElement() const {
-    return selectedElement;
+    return activeArena->getElements().at(static_cast<size_t>(selectedElementIndex));
 }

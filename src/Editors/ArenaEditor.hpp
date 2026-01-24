@@ -11,6 +11,7 @@
 #include "models/ArenaElementsModel.hpp"
 #include "models/ArenaPropertyModel.hpp"
 #include "EditorCanvas.hpp"
+#include "models/Drawables/ArenaDrawable.hpp"
 
 class ArenaEditor : public vxEditor {
     Q_OBJECT
@@ -44,6 +45,7 @@ public:
     ArenaPropertyModel* currentPropertyModelRead() const;
     void selectElement(int index);
     ArenaElement* getSelectedElement() const;
+    void provideWindow(QObject* window) override;
 
 signals:
     void arenaChanged();
@@ -58,5 +60,6 @@ protected:
     ArenaPropertyModel* currentPropertyModel;
     int selectedElementIndex = -1;
     EditorCanvas* editorCanvas;
+    ArenaDrawable *arenaDrawable = nullptr;
 
 };

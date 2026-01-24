@@ -7,3 +7,7 @@
 void CanvasDrawable::draw(QPainter *painter) {
 
 }
+
+QRectF CanvasDrawable::getBounds() const {
+    return QRectF();
+}

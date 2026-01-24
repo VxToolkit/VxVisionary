@@ -45,6 +45,8 @@ qt_add_executable(VxtVisionary
     models/ArenaPropertyModel.hpp
     src/CanvasDrawable.cpp
     src/CanvasDrawable.hpp
+    models/Drawables/ArenaDrawable.cpp
+    models/Drawables/ArenaDrawable.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)
@@ -90,6 +92,7 @@ qt_add_qml_module(VxtVisionary
     assets/Icons/save-icon.png
     assets/Icons/new-file.png
     assets/Icons/open-file.png
+    assets/Icons/fit-view.png
 
 )
 

@@ -62,3 +62,7 @@ void ArenaAsset::addElement(ArenaElement* element) {
 std::vector<ArenaElement*>& ArenaAsset::getElements() {
     return elements;
 }
+
+Vec2 const& ArenaAsset::getBounds() const {
+    return bounds;
+}

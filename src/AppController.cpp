@@ -132,6 +132,9 @@ void AppController::openWorkspace(QString name) {
             return;
         }
 
+        ArenaEditor* arenaEditor = new ArenaEditor(this, m_engine, nullptr, this);
+        m_engine->rootContext()->setContextProperty("arenaEditor", arenaEditor);
+
         QQmlComponent component(m_engine, QUrl("qrc:/qt/qml/Main/content/ArenaEditor.qml"));
         QObject* window = component.create();
 
@@ -140,9 +143,7 @@ void AppController::openWorkspace(QString name) {
             return;
         }
         m_editorWindows[EditorType::Arena] = window;
-        ArenaEditor* arenaEditor = new ArenaEditor(this, m_engine, window, this);
-
-        m_engine->rootContext()->setContextProperty("arenaEditor", arenaEditor);
+        arenaEditor->provideWindow(window);
 
         m_openEditors.push_back(arenaEditor);
     }

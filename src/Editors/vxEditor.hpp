@@ -23,6 +23,7 @@ public:
 
     virtual EditorType type() const;
     virtual void assetRecieved(Asset* asset);
+    virtual void provideWindow(QObject* window);
 
 protected:
     AppController* m_controller;

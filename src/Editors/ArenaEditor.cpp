@@ -19,13 +19,19 @@ EditorType ArenaEditor::type() const {
 
 ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController *controller)
     : vxEditor(parent, engine, window, controller), activeArena(nullptr), editorCanvas(nullptr) {
+
+    currentElementsModel = new ArenaElementsModel(this);
+    currentPropertyModel = new ArenaPropertyModel(this);
+    arenaDrawable = new ArenaDrawable();
+}
+
+void ArenaEditor::provideWindow(QObject* window) {
+    m_window = window;
+
     auto *quickWindow = qobject_cast<QQuickWindow*>(m_window);
     connect(quickWindow, &QQuickWindow::closing, this, []() {
         AppController::deleteEditorPtr(EditorType::Arena);
     });
-
-    currentElementsModel = new ArenaElementsModel(this);
-    currentPropertyModel = new ArenaPropertyModel(this);
 }
 
 ArenaEditor::~ArenaEditor() = default;
@@ -42,7 +48,7 @@ void ArenaEditor::newArena() const {
     );
 
     if (ok && !newName.isEmpty()) {
-        ArenaAsset *newArena = new ArenaAsset(newName, {100,100});
+        ArenaAsset *newArena = new ArenaAsset(newName, {12,12});
         m_controller->currentLoadedProject()->addAsset(dynamic_cast<Asset*>(newArena));
     }
     currentElementsModel->reset();
@@ -54,6 +60,7 @@ void ArenaEditor::canvasReady(EditorCanvas* canvas) {
 
     editorCanvas->setDrawableProvider([this]() {
         std::vector<CanvasDrawable*> drawables;
+        drawables.push_back(arenaDrawable);
         if (activeArena) {
             for (auto& element : activeArena->getElements()) {
                 drawables.push_back(element);
@@ -92,6 +99,8 @@ void ArenaEditor::loadArena(ArenaAsset* assetToLoad) {
     }
     currentElementsModel->setArenaAsset(activeArena);
     currentPropertyModel->setTargetElement(nullptr);
+
+    arenaDrawable->setLinkedAsset(activeArena);
 
     emit arenaChanged();
     emit elementsChanged();

@@ -16,3 +16,7 @@ EditorType vxEditor::type() const {
 void vxEditor::assetRecieved(Asset* asset) {
     // default imp
 }
+
+void vxEditor::provideWindow(QObject* window) {
+    // default imp
+}

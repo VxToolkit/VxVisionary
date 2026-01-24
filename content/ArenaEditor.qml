@@ -34,6 +34,14 @@ Window {
 
             VxToolButton {
                 checkable: false
+                imageSource: "../../assets/Icons/fit-view.png"
+                onVxClicked: {
+                    arenaCanvas.fitToView();
+                }
+            }
+
+            VxToolButton {
+                checkable: false
                 imageSource: "../../assets/Icons/open-file.png"
                 onVxClicked: {
                     arenaEditor.openArena();
@@ -76,13 +84,28 @@ Window {
                 orientation: Qt.Horizontal
 
                 EditorCanvas {
+                    id: arenaCanvas
                     SplitView.preferredWidth: 600
                     SplitView.fillWidth: true
                     SplitView.minimumWidth: 400
-                    id: arenaCanvas
+                    function tryRegister() {
+                        console.log("Trying to register arena canvas with arena editor...");
+                        if (typeof arenaEditor !== "undefined" && arenaEditor !== null) {
+                            console.log("Registering arena canvas with arena editor...");
+                            arenaEditor.canvasReady(arenaCanvas);
+                            return true;
+                        }
+                        return false;
+                    }
+                    Component.onCompleted: tryRegister()
+                }
 
-                    Component.onCompleted: {
-                        arenaEditor.canvasReady(arenaCanvas)
+                Connections {
+                    target: (typeof arenaEditor !== "undefined") ? arenaEditor : null
+                    ignoreUnknownSignals: true
+
+                    function onReadyChanged() {
+                        arenaCanvas.tryRegister();
                     }
                 }
 

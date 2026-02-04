@@ -7,6 +7,9 @@
 #include <utility>
 #include <QRectF>
 #include <algorithm>
+#include <QMouseEvent>
+#include <QWheelEvent>
+#include <QNativeGestureEvent>
 
 EditorCanvas::EditorCanvas(QQuickItem* parent) : QQuickPaintedItem(parent) {
     setImplicitWidth(600);
@@ -14,6 +17,11 @@ EditorCanvas::EditorCanvas(QQuickItem* parent) : QQuickPaintedItem(parent) {
 
     canvasOffset = {0.0, 0.0};
     canvasScale = CANVAS_PPI; // 100 pixels per inch
+
+    isPanning = false;
+
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::MiddleButton | Qt::RightButton);
+    setAcceptHoverEvents(true);
 }
 
 void EditorCanvas::paint(QPainter* painter) {
@@ -111,3 +119,105 @@ void EditorCanvas::fitToView() {
 
     update();
 }
+
+void EditorCanvas::mousePressEvent(QMouseEvent* event) {
+    if (event->button() == Qt::MiddleButton ||
+        (event->button() == Qt::LeftButton && event->modifiers() & Qt::ShiftModifier)) {
+        isPanning = true;
+        lastMousePos = event->pos();
+        event->accept();
+    } else {
+        QQuickPaintedItem::mousePressEvent(event);
+    }
+}
+
+void EditorCanvas::mouseMoveEvent(QMouseEvent* event) {
+    if (isPanning) {
+        QPointF delta = event->pos() - lastMousePos;
+
+        canvasOffset.x += delta.x() / canvasScale;
+        canvasOffset.y += delta.y() / canvasScale;
+
+        lastMousePos = event->pos();
+        update();
+        event->accept();
+    } else {
+        QQuickPaintedItem::mouseMoveEvent(event);
+    }
+}
+
+void EditorCanvas::mouseReleaseEvent(QMouseEvent* event) {
+    if (event->button() == Qt::MiddleButton ||
+        (event->button() == Qt::LeftButton && isPanning)) {
+        isPanning = false;
+        event->accept();
+    } else {
+        QQuickPaintedItem::mouseReleaseEvent(event);
+    }
+}
+
+void EditorCanvas::wheelEvent(QWheelEvent* event) {
+    QPoint numPixels = event->pixelDelta();
+    QPoint numDegrees = event->angleDelta();
+
+    if (!numPixels.isNull()) {
+        canvasOffset.x += numPixels.x() / canvasScale;
+        canvasOffset.y += numPixels.y() / canvasScale;
+        update();
+    } else if (!numDegrees.isNull()) {
+        if (event->modifiers() & Qt::ControlModifier) {
+            double delta = numDegrees.y() / 120.0;
+            double factor = qPow(ZOOM_FACTOR, delta);
+            zoomAt(event->position(), factor);
+        } else {
+            canvasOffset.x += numDegrees.x() / 120.0 * 20.0 / canvasScale;
+            canvasOffset.y += numDegrees.y() / 120.0 * 20.0 / canvasScale;
+            update();
+        }
+    }
+
+    event->accept();
+}
+
+bool EditorCanvas::event(QEvent* event) {
+    if (event->type() == QEvent::NativeGesture) {
+        auto* gestureEvent = static_cast<QNativeGestureEvent*>(event);
+        switch (gestureEvent->gestureType()) {
+            case Qt::ZoomNativeGesture: {
+                double zoomValue = gestureEvent->value();
+                double factor = 1.0 + zoomValue;
+                zoomAt(gestureEvent->position(), factor);
+                return true;
+            }
+            case Qt::SmartZoomNativeGesture: {
+                fitToView();
+                return true;
+            }
+            default:
+                break;
+        }
+    }
+    return QQuickPaintedItem::event(event);
+}
+
+void EditorCanvas::zoomAt(const QPointF& pos, double factor) {
+    double oldScale = canvasScale;
+    double newScale = oldScale * factor;
+
+    newScale = qMax(MIN_SCALE, qMin(MAX_SCALE, newScale));
+
+    if (qFuzzyCompare(oldScale, newScale)) {
+        return;
+    }
+
+    double worldX = (pos.x() - width() / 2.0) / oldScale - canvasOffset.x;
+    double worldY = (pos.y() - height() / 2.0) / oldScale - canvasOffset.y;
+
+    canvasScale = newScale;
+
+    canvasOffset.x = (pos.x() - width() / 2.0) / newScale - worldX;
+    canvasOffset.y = (pos.y() - height() / 2.0) / newScale - worldY;
+
+    update();
+}
+

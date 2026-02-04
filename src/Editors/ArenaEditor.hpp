@@ -20,6 +20,7 @@ class ArenaEditor : public vxEditor {
     Q_PROPERTY(QStringList currentArenaElements READ getCurrentArenaElements NOTIFY elementsChanged)
     Q_PROPERTY(ArenaElementsModel* currentElementsModel READ currentElementsModelRead NOTIFY elementsChanged)
     Q_PROPERTY(ArenaPropertyModel* currentPropertyModel READ currentPropertyModelRead NOTIFY arenaPropModelChanged)
+    Q_PROPERTY(int selectedElementIndex READ getSelectedElementIndex NOTIFY selectionChanged)
 public:
     virtual ~ArenaEditor();
     ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject* window, AppController* controller);
@@ -45,6 +46,7 @@ public:
     ArenaPropertyModel* currentPropertyModelRead() const;
     void selectElement(int index);
     ArenaElement* getSelectedElement() const;
+    int getSelectedElementIndex() const;
     void provideWindow(QObject* window) override;
 
 signals:
@@ -52,6 +54,7 @@ signals:
     void arenaPropModelChanged();
     void tabUpdateEvent();
     void elementsChanged();
+    void selectionChanged();
 
 protected:
     std::vector<ArenaAsset*> openArenas;

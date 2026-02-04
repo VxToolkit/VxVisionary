@@ -149,12 +149,12 @@ Window {
                             required property bool expanded
                             required property int depth
                             required property string display
+                            required property int row
 
                             Rectangle {
                                 id: bgRect
                                 anchors.fill: parent
-                                //color: "transparent"
-                                color: "#ff0000"
+                                color: (row === arenaEditor.selectedElementIndex) ? "#ff0000" : "transparent"
                             }
 
                             Text {

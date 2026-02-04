@@ -5,6 +5,7 @@
 #include <QDataStream>
 #include <QDebug>
 #include <algorithm>
+#include <qloggingcategory.h>
 #include <QtLogging>
 
 #include "ArenaAsset.hpp"
@@ -22,7 +23,11 @@ void Project::getProjectList(const QDir& configPath) {
             QString cleanLine = QString::fromUtf8(line).trimmed();
 
             if (!cleanLine.isEmpty()) {
-                projectList.push_back(cleanLine.toStdString());
+                if (QFile::exists(cleanLine)) {
+                    projectList.push_back(cleanLine.toStdString());
+                } else {
+                    qWarning() << "Project file does not exist, skipping:" << cleanLine;
+                }
             }
         }
         configFile.close();

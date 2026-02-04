@@ -16,7 +16,7 @@ void ArenaDrawable::draw(QPainter* painter) {
 
     QRectF arenaRect(-w / 2.0, -h / 2.0, w, h);
 
-    QColor hatchColor(60, 55, 110, 180);
+    QColor hatchColor(60, 55, 76, 180);
     QColor borderColor(80, 75, 150);
 
     QBrush hatchBrush(hatchColor, Qt::DiagCrossPattern);
@@ -31,8 +31,8 @@ void ArenaDrawable::draw(QPainter* painter) {
 
     QRadialGradient fadeGradiant(0, 0, qMax(w, h) * 0.5);
     fadeGradiant.setColorAt(0.0, Qt::transparent);
-    fadeGradiant.setColorAt(0.8, QColor(16, 16, 16, 200));
-    fadeGradiant.setColorAt(1.0, QColor(16, 16, 16, 255));
+    fadeGradiant.setColorAt(0.9, QColor(16, 16, 16, 50));
+    fadeGradiant.setColorAt(1.0, QColor(16, 16, 16, 100));
 
     painter->setBrush(fadeGradiant);
     painter->drawRect(arenaRect);

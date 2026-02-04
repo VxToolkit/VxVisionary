@@ -97,6 +97,7 @@ void ArenaEditor::loadArena(ArenaAsset* assetToLoad) {
     if (!alreadyOpen) {
         openArenas.push_back(assetToLoad);
     }
+    selectedElementIndex = -1;
     currentElementsModel->setArenaAsset(activeArena);
     currentPropertyModel->setTargetElement(nullptr);
 
@@ -105,6 +106,7 @@ void ArenaEditor::loadArena(ArenaAsset* assetToLoad) {
     emit arenaChanged();
     emit elementsChanged();
     emit arenaPropModelChanged();
+    emit selectionChanged();
     emit tabUpdateEvent();
     currentElementsModel->reset();
 }
@@ -148,11 +150,13 @@ void ArenaEditor::deleteTab(int index) {
                 loadArena(openArenas.at(newIndex));
             } else {
                 activeArena = nullptr;
+                selectedElementIndex = -1;
                 currentElementsModel->setArenaAsset(nullptr);
                 currentPropertyModel->setTargetElement(nullptr);
                 emit arenaChanged();
                 emit elementsChanged();
                 emit arenaPropModelChanged();
+                emit selectionChanged();
             }
         }
     }
@@ -183,12 +187,14 @@ void ArenaEditor::selectElementAtIndex(int index) {
     if (!activeArena || index < 0 || index >= static_cast<int>(activeArena->getElements().size())) {
         selectedElementIndex = -1;
         currentPropertyModel->setTargetElement(nullptr);
+        emit selectionChanged();
         return;
     }
 
     selectedElementIndex = index;
     ArenaElement* element = activeArena->getElements().at(static_cast<size_t>(index));
     currentPropertyModel->setTargetElement(element);
+    emit selectionChanged();
 }
 
 void ArenaEditor::removeSelectedElementFromCurrentArena() {
@@ -204,6 +210,7 @@ void ArenaEditor::removeSelectedElementFromCurrentArena() {
 
     emit elementsChanged();
     emit arenaChanged();
+    emit selectionChanged();
     currentElementsModel->reset(); // refresh list
 }
 
@@ -241,8 +248,14 @@ void ArenaEditor::selectElement(int index) {
     currentPropertyModel->setTargetElement(selectedElement);
     selectedElementIndex = index;
     emit arenaPropModelChanged();
+    emit selectionChanged();
 }
 
 ArenaElement* ArenaEditor::getSelectedElement() const {
     return activeArena->getElements().at(static_cast<size_t>(selectedElementIndex));
 }
+
+int ArenaEditor::getSelectedElementIndex() const {
+    return selectedElementIndex;
+}
+

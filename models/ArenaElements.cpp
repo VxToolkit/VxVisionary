@@ -9,7 +9,7 @@
 #include "CopyUtils.hpp"
 #include <QDataStream>
 #include "ArenaElementRegistry.hpp"
-
+#include "DrawUtils/HatchedBox.hpp"
 
 
 ArenaElementType NoGoElement::getType() const {
@@ -47,32 +47,16 @@ void NoGoElement::draw(QPainter* painter) {
 
     QRectF rect(-0.5, -0.5, 1.0, 1.0);
 
-    QColor darkRed = QColor(150, 0, 0);
-    QBrush hatchBrush(darkRed, Qt::FDiagPattern);
-    QTransform deviceTransform = painter->deviceTransform();
-    QTransform brushTransform;
-    brushTransform.scale(1.0 / deviceTransform.m11(), 1.0 / deviceTransform.m22());
-    hatchBrush.setTransform(brushTransform);
+    // Configure style: Red, Solid, High Opacity
+    BoxStyle style;
+    style.baseColor = QColor(150, 0, 0);       // Dark Red
+    style.glowColor = QColor(255, 0, 0, 40);   // Red Glow
+    style.pattern = Qt::FDiagPattern;
+    style.lineStyle = Qt::SolidLine;
+    style.borderWidth = 1.0;
+    style.opacity = 1.0; // Full opacity for the danger zone
 
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(hatchBrush);
-    painter->drawRect(rect);
-
-    QRadialGradient glowGradient(0, 0, 0.5);
-    glowGradient.setColorAt(0.0, Qt::transparent);
-    glowGradient.setColorAt(0.8, QColor(255, 0, 0, 40));
-    glowGradient.setColorAt(1.0, QColor(255, 0, 0, 120));
-
-    painter->setBrush(glowGradient);
-    painter->drawRect(rect);
-
-    QPen borderPen(Qt::red);
-    borderPen.setWidthF(1.0);
-    borderPen.setCosmetic(true);
-
-    painter->setPen(borderPen);
-    painter->setBrush(Qt::NoBrush);
-    painter->drawRect(rect);
+    drawHatchedBox(painter, rect, style);
 
     painter->restore();
 }

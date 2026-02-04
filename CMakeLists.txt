@@ -47,6 +47,8 @@ qt_add_executable(VxtVisionary
     src/CanvasDrawable.hpp
     models/Drawables/ArenaDrawable.cpp
     models/Drawables/ArenaDrawable.hpp
+    models/DrawUtils/HatchedBox.cpp
+    models/DrawUtils/HatchedBox.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)

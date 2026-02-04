@@ -80,6 +80,8 @@ qt_add_qml_module(VxtVisionary
     content/components/VxGenericListDialog.qml
     content/components/VxStrListView.qml
     content/components/VxPropInspector.qml
+    content/components/VxDialog.qml
+    content/components/VxSelectorFrame.qml
 
     RESOURCES
     assets/VXVisionarySplash.png
@@ -95,6 +97,8 @@ qt_add_qml_module(VxtVisionary
     assets/Icons/new-file.png
     assets/Icons/open-file.png
     assets/Icons/fit-view.png
+    assets/Icons/blank-icon.png
+    assets/Icons/pushback-icon.png
 
 )
 

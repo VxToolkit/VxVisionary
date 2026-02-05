@@ -215,27 +215,92 @@ Window {
         Item {
             width: projectStack.width
             height: projectStack.height
+
+
             property string presetName: ""
             property string projectName: ""
+            property string selectedMode: "default"
 
-            Column {
-                anchors.fill: parent; spacing: 20
-                Text { text: "Configure: " + presetName; font.pixelSize: 24; font.bold: true; color: "white" }
-                Text { text: "Project: " + (projectName === "" ? "Untitled" : projectName); color: "#888888" }
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 20
 
-                Rectangle {
-                    width: parent.width; height: 200; color: "#2a2a2a"; border.color: "#3d3d3d"; radius: 4
-                    Text { anchors.centerIn: parent; text: "Settings for " + presetName; color: "#666666" }
+                ColumnLayout {
+                    spacing: 5
+                    Text {
+                        text: "Select Base Template"
+                        font.pixelSize: 24
+                        font.bold: true
+                        color: "white"
+                    }
+                    Text {
+                        text: "Project: " + (projectName || "Untitled") + "  •  Blueprint: " + presetName
+                        color: "#888888"
+                        font.pixelSize: 14
+                    }
                 }
 
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "#3d3d3d"
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 15
+
+                    VxSelectorFrame {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 90
+                        title: "Standard VEX Template"
+                        description: "Use the default build system."
+                        imageSource: "../../assets/Icons/chip-icon.png"
+                        accentColor: "#4CAF50"
+
+                        opacity: selectedMode === "default" ? 1.0 : 0.5
+                        scale: selectedMode === "default" ? 1.02 : 1.0
+
+                        onClicked: selectedMode = "default"
+                    }
+
+                    VxSelectorFrame {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 90
+                        title: "Custom Template"
+                        description: "Initialize with a custom structure."
+                        imageSource: "../../assets/Icons/folder-icon.png"
+                        accentColor: "#2196F3" // Blue
+
+                        opacity: selectedMode === "custom" ? 1.0 : 0.5
+                        scale: selectedMode === "custom" ? 1.02 : 1.0
+
+                        onClicked: selectedMode = "custom"
+                    }
+                }
+
+                Item { Layout.fillHeight: true }
+
                 Row {
-                    spacing: 10; anchors.horizontalCenter: parent.horizontalCenter
-                    VxButton { text: "Back"; onVxClicked: projectStack.pop() }
+                    Layout.alignment: Qt.AlignHCenter
+                    spacing: 20
+
+                    VxButton {
+                        text: "Back"
+                        onVxClicked: projectStack.pop()
+                    }
+
                     VxButton {
                         text: "Create Project"
                         onVxClicked: {
-                            console.log("Creating: " + projectName)
-                            projectOnboardingDialog.visible = false
+                            console.log("Creating Project:", projectName)
+                            console.log("Blueprint:", presetName)
+                            console.log("Custom Template Mode:", selectedMode === "custom")
+
+                            appController.makeProject(projectName, presetName, selectedMode === "custom")
+
+                            window.projectOnboardingDialog.visible = false
+                            selectedMode = "default"
                         }
                     }
                 }

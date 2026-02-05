@@ -26,8 +26,10 @@ int main(int argc, char *argv[])
     splash.show();
     app.processEvents();
 
+
     // engine
     QQmlApplicationEngine* engine = new QQmlApplicationEngine();
+
 
     // load qml
     AppController appController(engine);

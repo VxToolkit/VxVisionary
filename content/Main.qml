@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
+import QtQuick.Layouts
 
 Window {
     id: window
@@ -89,76 +90,153 @@ Window {
         transientParent: window
         width: 1024
         height: 600
+        visible: false
 
-        Column {
-            width: parent.width - 4
-            height: parent.height - 40
-            anchors.centerIn: parent
-            spacing: 15
+        StackView {
+            id: projectStack
+            anchors.fill: parent
+            anchors.margins: 30
+            initialItem: selectionPage
 
-            Text {
-                text: "Enter Project Name:"
-                color: "white"
+            pushEnter: Transition {
+                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 200 }
+                NumberAnimation { property: "x"; from: 100; to: 0; duration: 200; easing.type: Easing.OutCubic }
             }
-
-            TextField {
-                width: parent.width
-                placeholderText: "Project Name..."
+            popExit: Transition {
+                NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 200 }
+                NumberAnimation { property: "x"; from: 0; to: 100; duration: 200; easing.type: Easing.InCubic }
             }
+        }
+    }
 
-            Text {
-                text: "Templates"
-                font.pixelSize: 20
-                font.bold : true
-                color: "white"
-            }
+    Component {
+        id: selectionPage
+        Item {
+            width: projectStack.width
+            height: projectStack.height
 
-            VxSelectorFrame {
-                anchors.horizontalCenter: parent.horizontalCenter
-                title: "Blank"
-                description: "Create a project from scratch."
-                imageSource: "../../assets/Icons/blank-icon.png"
-                badgeText: ""
-                accentColor: "#db3434"
-                onClicked: projectOnboardingDialog.visible = false
-            }
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 20
 
-            Rectangle {
-                width: parent.width
-                height: 1
-                color: "#3d3d3d"
-            }
-
-            Text {
-                text: "Blueprints"
-                font.pixelSize: 20
-                font.bold : true
-                color: "white"
-            }
-
-            ScrollView {
-                id: blueprintScroll
-                width: parent.width
-                height: 250
-                clip: true
-
-                Flow {
-                    id: blueprintFlow
-                    width: blueprintScroll.width
-                    spacing: 15
-
-                    VxSelectorFrame {
-                        width: (parent.width / 2) - 10
-                        title: "Push Back"
-                        description: "A blueprint for the 2025-2026 VRC Push Back game."
-                        imageSource: "../../assets/Icons/pushback-icon.png"
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 5
+                    Text {
+                        text: "Enter Project Name:"
+                        color: "white"
+                        font.pixelSize: 14
                     }
+                    TextField {
+                        id: projectNameField
+                        Layout.fillWidth: true
+                        placeholderText: "Project Name..."
+                        color: "white"
+                        background: Rectangle {
+                            color: "#333333"
+                            radius: 4
+                            border.color: projectNameField.activeFocus ? "#db3434" : "#555555"
+                        }
+                    }
+                }
 
-                    VxSelectorFrame {
-                        width: (parent.width / 2) - 10
-                        title: "template1"
-                        description: "yo"
-                        imageSource: "../../assets/Icons/open-file.png"
+                Text {
+                    text: "Presets"
+                    font.pixelSize: 20
+                    font.bold: true
+                    color: "white"
+                }
+
+                VxSelectorFrame {
+                    //Layout.fillWidth: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Layout.preferredHeight: 110
+                    title: "Blank"
+                    description: "Create a project from scratch."
+                    imageSource: "../../assets/Icons/blank-icon.png"
+                    onClicked: projectStack.push(templatePage, {
+                        "presetName": "Blank",
+                        "projectName": projectNameField.text
+                    })
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "#3d3d3d"
+                }
+
+                ScrollView {
+                    id: presetsScroll
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    clip: true
+
+                    Grid {
+                        id: presetGrid
+                        width: presetsScroll.availableWidth
+                        columns: 2
+                        columnSpacing: 15
+                        rowSpacing: 15
+
+                        property real itemWidth: (width - columnSpacing) / 2
+
+                        VxSelectorFrame {
+                            width: presetGrid.itemWidth
+                            height: 110
+                            title: "Push Back"
+                            description: "VRC 2025-2026 blueprint."
+                            imageSource: "../../assets/Icons/pushback-icon.png"
+                            onClicked: projectStack.push(templatePage, {
+                                "presetName": "Push Back",
+                                "projectName": projectNameField.text
+                            })
+                        }
+
+                        VxSelectorFrame {
+                            width: presetGrid.itemWidth
+                            height: 110
+                            title: "Preset 1"
+                            description: "User defined preset."
+                            imageSource: "../../assets/Icons/open-file.png"
+                            onClicked: projectStack.push(templatePage, {
+                                "presetName": "Preset 1",
+                                "projectName": projectNameField.text
+                            })
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Component {
+        id: templatePage
+        Item {
+            width: projectStack.width
+            height: projectStack.height
+            property string presetName: ""
+            property string projectName: ""
+
+            Column {
+                anchors.fill: parent; spacing: 20
+                Text { text: "Configure: " + presetName; font.pixelSize: 24; font.bold: true; color: "white" }
+                Text { text: "Project: " + (projectName === "" ? "Untitled" : projectName); color: "#888888" }
+
+                Rectangle {
+                    width: parent.width; height: 200; color: "#2a2a2a"; border.color: "#3d3d3d"; radius: 4
+                    Text { anchors.centerIn: parent; text: "Settings for " + presetName; color: "#666666" }
+                }
+
+                Row {
+                    spacing: 10; anchors.horizontalCenter: parent.horizontalCenter
+                    VxButton { text: "Back"; onVxClicked: projectStack.pop() }
+                    VxButton {
+                        text: "Create Project"
+                        onVxClicked: {
+                            console.log("Creating: " + projectName)
+                            projectOnboardingDialog.visible = false
+                        }
                     }
                 }
             }

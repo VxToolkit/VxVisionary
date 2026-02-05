@@ -82,6 +82,7 @@ qt_add_qml_module(VxtVisionary
     content/components/VxPropInspector.qml
     content/components/VxDialog.qml
     content/components/VxSelectorFrame.qml
+    content/components/VxDropdown.qml
 
     RESOURCES
     assets/VXVisionarySplash.png
@@ -99,7 +100,9 @@ qt_add_qml_module(VxtVisionary
     assets/Icons/fit-view.png
     assets/Icons/blank-icon.png
     assets/Icons/pushback-icon.png
-
+    assets/Icons/plus.png
+    assets/Icons/custom.png
+    assets/Icons/folder.png
 )
 
 target_link_libraries(VxtVisionary

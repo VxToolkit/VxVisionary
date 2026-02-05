@@ -260,3 +260,8 @@ void AppController::loadProjectFromFile() {
     }
     loadProject(fileName);
 }
+
+QString AppController::openDirectoryDialog() {
+    QString dir = QFileDialog::getExistingDirectory(nullptr, "Select Directory", QDir::homePath());
+    return dir;
+}

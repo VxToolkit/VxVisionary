@@ -38,6 +38,7 @@ public:
     Q_INVOKABLE void assetReceived(QString name);
     Q_INVOKABLE void genericElementReceived(QString picker);
     Q_INVOKABLE void loadProjectFromFile();
+    Q_INVOKABLE QString openDirectoryDialog();
 
     std::vector<Asset*>& getAssets() const;
 

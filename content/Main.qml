@@ -92,6 +92,13 @@ Window {
         height: 600
         visible: false
 
+        onVisibleChanged: {
+            if (!visible) {
+                projectStack.pop(null)
+                tempProjectName = ""
+            }
+        }
+
         StackView {
             id: projectStack
             anchors.fill: parent
@@ -131,6 +138,7 @@ Window {
                         id: projectNameField
                         Layout.fillWidth: true
                         placeholderText: "Project Name..."
+                        onTextChanged: projectOnboardingDialog.tempProjectName = text
                         color: "white"
                         background: Rectangle {
                             color: "#333333"
@@ -211,6 +219,116 @@ Window {
     }
 
     Component {
+        id: customTemplatePage
+        Item {
+            width: projectStack.width
+            height: projectStack.height
+
+            Text {
+                text: "Configure custom template"
+                color: "white"
+                font.pixelSize: 24
+                anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            Text {
+                text: "Please enter a valid git repository URL or local directory path for your custom template."
+                color: "#888888"
+                font.pixelSize: 14
+                anchors.top: parent.top
+                anchors.topMargin: 50
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            Row {
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 70
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 20
+                VxButton {
+                    text: "Create Project"
+                    onVxClicked: {
+                        var templateSource = templateSourceField.text.trim()
+                        if (templateSource === "") {
+                            console.log("Template source cannot be empty.")
+                            return
+                        }
+
+                        appController.makeProjectCustom(projectNameField.text, templateSource, templateSourceDropdown.currentText)
+
+                        window.projectOnboardingDialog.visible = false
+                    }
+                }
+
+                VxButton {
+                    text: "Cancel"
+                    onVxClicked: projectStack.pop()
+                }
+            }
+
+            VxDropdown {
+                id: templateSourceDropdown
+                anchors.top: parent.top
+                anchors.topMargin: 120
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.6
+                placeholderText: "Select Template Source"
+                model: ["Git Repository", "Local Directory"]
+            }
+
+            TextField {
+                id: templateSourceField
+                anchors.top: templateSourceDropdown.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.6
+                placeholderText: templateSourceDropdown.currentText === "Git Repository" ? "Enter Git Repository URL..." : "Enter Local Directory Path..."
+                color: "white"
+                rightPadding: templateSourceDropdown.currentText === "Local Directory" ? 40 : 10
+                background: Rectangle {
+                    color: "#333333"
+                    radius: 4
+                    border.color: templateSourceField.activeFocus ? "#db3434" : "#555555"
+                }
+            }
+
+            Rectangle {
+                id: folderSelectButton
+                visible: templateSourceDropdown.currentText === "Local Directory"
+                width: 32
+                height: 32
+
+                anchors.left: templateSourceField.right
+                anchors.leftMargin: 4
+                anchors.verticalCenter: templateSourceField.verticalCenter
+                color: folderMouseArea.containsMouse ? "#555555" : "#434343"
+                radius: 3
+
+                Image {
+                    source: "../../assets/Icons/folder.png"
+                    width: 20
+                    height: 20
+                    anchors.centerIn: parent
+                }
+
+                MouseArea {
+                    id: folderMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        var dir = appController.openDirectoryDialog()
+                        if (dir) {
+                            templateSourceField.text = dir
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Component {
         id: templatePage
         Item {
             width: projectStack.width
@@ -253,24 +371,25 @@ Window {
                     VxSelectorFrame {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 90
-                        title: "Standard VEX Template"
-                        description: "Use the default build system."
-                        imageSource: "../../assets/Icons/chip-icon.png"
+                        title: "VxTemplate"
+                        description: "The template build specifically for use with other VX tools."
+                        badgeText: "Recommended"
+                        imageSource: "../../assets/Logo.png"
                         accentColor: "#4CAF50"
 
                         opacity: selectedMode === "default" ? 1.0 : 0.5
                         scale: selectedMode === "default" ? 1.02 : 1.0
 
-                        onClicked: selectedMode = "default"
+                        onClicked: selectedMode = "vxtemplate"
                     }
 
                     VxSelectorFrame {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 90
                         title: "Custom Template"
-                        description: "Initialize with a custom structure."
-                        imageSource: "../../assets/Icons/folder-icon.png"
-                        accentColor: "#2196F3" // Blue
+                        description: "Choose your own git repository/local directory for full control over your project template."
+                        imageSource: "../../assets/Icons/custom.png"
+                        accentColor: "#2196F3"
 
                         opacity: selectedMode === "custom" ? 1.0 : 0.5
                         scale: selectedMode === "custom" ? 1.02 : 1.0
@@ -295,18 +414,24 @@ Window {
                         onVxClicked: {
                             console.log("Creating Project:", projectName)
                             console.log("Blueprint:", presetName)
-                            console.log("Custom Template Mode:", selectedMode === "custom")
+                            console.log("Custom Template Mode:", selectedMode)
 
-                            appController.makeProject(projectName, presetName, selectedMode === "custom")
+                            if (selectedMode == "custom") {
+                                projectStack.push(customTemplatePage)
+                            }
+                            else {
+                                appController.makeProject(projectName, presetName, selectedMode)
 
-                            window.projectOnboardingDialog.visible = false
-                            selectedMode = "default"
+                                window.projectOnboardingDialog.visible = false
+                                selectedMode = "default"
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 
     VxButton {
         text: "New Project"

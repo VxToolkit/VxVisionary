@@ -11,6 +11,7 @@
 #include <QStandardPaths>
 #include "models/Project.hpp"
 #include "AppController.h"
+#include "git2.h"
 
 using namespace Qt::StringLiterals;
 
@@ -28,8 +29,12 @@ int main(int argc, char *argv[])
 
 
     // engine
+    splash.showMessage("Initializing UI...", Qt::AlignBottom | Qt::AlignHCenter, Qt::white);
     QQmlApplicationEngine* engine = new QQmlApplicationEngine();
 
+    // initalize git
+    splash.showMessage("Loading Third-Party Modules...", Qt::AlignBottom | Qt::AlignHCenter, Qt::white);
+    git_libgit2_init();
 
     // load qml
     AppController appController(engine);

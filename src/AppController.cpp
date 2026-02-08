@@ -100,22 +100,22 @@ void AppController::loadProject(const QString &projectPath) {
     }
 }
 
-void AppController::createNewProject() {
-    QString fileName = QFileDialog::getSaveFileName(nullptr, "Create New Project", QDir::homePath(), "VxTemplate Project Files (*.vxtemplate)");
-    if (fileName.isEmpty()) {
-        QMessageBox::critical(nullptr, "Could not create project file", "No file name was specified.");
-        return;
-    }
-    QFileInfo info(fileName);
-    QString projectName = info.baseName();
-
-    Project* newProject = new Project(projectName, info.absolutePath());
-    Project::addRecentProject(fileName.toStdString());
-
-    newProject->save();
-    delete newProject;
-    loadProject(fileName);
-}
+// void AppController::createNewProject() {
+//     QString fileName = QFileDialog::getSaveFileName(nullptr, "Create New Project", QDir::homePath(), "VxTemplate Project Files (*.vxtemplate)");
+//     if (fileName.isEmpty()) {
+//         QMessageBox::critical(nullptr, "Could not create project file", "No file name was specified.");
+//         return;
+//     }
+//     QFileInfo info(fileName);
+//     QString projectName = info.baseName();
+//
+//     Project* newProject = new Project(projectName, info.absolutePath());
+//     Project::addRecentProject(fileName.toStdString());
+//
+//     newProject->save();
+//     delete newProject;
+//     loadProject(fileName);
+// }
 
 QString AppController::getProjectName() const {
     if (m_currentLoadedProject) {
@@ -264,4 +264,29 @@ void AppController::loadProjectFromFile() {
 QString AppController::openDirectoryDialog() {
     QString dir = QFileDialog::getExistingDirectory(nullptr, "Select Directory", QDir::homePath());
     return dir;
+}
+
+void AppController::makeProject(QString projectName, QString presetName, QString templateSource, QString templateSourceType) {
+    Project::TemplateSourceType sourceType = templateSourceType == "Directory" ? Project::TemplateSourceType::Directory : Project::TemplateSourceType::Url;
+
+    QString projectPath = QFileDialog::getExistingDirectory(nullptr, "Select Project Directory", QDir::homePath());
+    if (projectPath.isEmpty()) {
+        QMessageBox::critical(nullptr, "Error", "No project directory was selected.");
+        return;
+    }
+
+    try {
+        Project* newProject = new Project(projectName, projectPath, sourceType, templateSource.toStdString());
+
+        delete m_currentLoadedProject;
+
+        m_currentLoadedProject = newProject;
+
+        Project::addRecentProject(projectPath.toStdString());
+
+        newProject->save();
+        loadProject(projectPath + "/" + projectName + ".vxtemplate");
+    } catch (const std::runtime_error& e) {
+        QMessageBox::critical(nullptr, "Could not create project", e.what());
+    }
 }

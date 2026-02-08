@@ -8,9 +8,15 @@
 
 class Project {
 public:
+    // source
+    enum class TemplateSourceType : int16_t {
+        Url,
+        Directory
+    };
 
     explicit Project(const QString& projectPath);
-    Project(QString projectName, QString projectPath);
+    Project(QString projectName, QString projectPath, TemplateSourceType sourceType, const std::string& source);
+    ~Project();
     void writeToFile(QDataStream& filedata) const;
     void save() const;
     void addAsset(Asset* asset);
@@ -28,6 +34,15 @@ public:
     static std::vector<std::string> getRecentProjects();
     static void addRecentProject(const std::string& projectPath);
     static void writeRecentProjects(const QDir& configPath);
+    static QDir cache_url_template(const QDir &templatePath, const std::string& url, const std::string &uuid);
+
+
+
+    void setTemplateSource(TemplateSourceType source_t,const std::string& source);
+    std::string getTemplateUUID() const;
+
+    QDir getTemplatePath() const;
+
 
 protected:
     QString name;
@@ -35,4 +50,7 @@ protected:
     // statics
     static std::vector<std::string> recent_projects;
     std::vector<Asset*> assets;
+
+    std::string templateSource;
+    TemplateSourceType templateSourceType;
 };

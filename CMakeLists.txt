@@ -105,10 +105,16 @@ qt_add_qml_module(VxtVisionary
     assets/Icons/folder.png
 )
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBGIT2 REQUIRED libgit2)
+
+target_include_directories(VxtVisionary PRIVATE ${LIBGIT2_INCLUDE_DIRS})
+
 target_link_libraries(VxtVisionary
     PRIVATE Qt6::Quick
     PRIVATE Qt6::Widgets
     PRIVATE Qt6::Gui
     PRIVATE Qt6::Core
     PRIVATE VxTemplate
+    PRIVATE ${LIBGIT2_LIBRARIES}
 )

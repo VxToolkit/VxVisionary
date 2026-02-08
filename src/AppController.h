@@ -32,13 +32,15 @@ public:
     AssetModel* assetModel() const;
 
     Q_INVOKABLE void loadProject(const QString& projectPath);
-    Q_INVOKABLE void createNewProject();
+    //Q_INVOKABLE void createNewProject();
     Q_INVOKABLE void openWorkspace(QString name);
     Q_INVOKABLE void saveCurrentProject();
     Q_INVOKABLE void assetReceived(QString name);
     Q_INVOKABLE void genericElementReceived(QString picker);
     Q_INVOKABLE void loadProjectFromFile();
     Q_INVOKABLE QString openDirectoryDialog();
+
+    Q_INVOKABLE void makeProject(QString projectName, QString presetName, QString templateSource, QString templateSourceType);
 
     std::vector<Asset*>& getAssets() const;
 

@@ -11,6 +11,7 @@ Item {
     property string description: "Description text goes here"
     property string badgeText: ""
     property color accentColor: "#ff4444"
+    property bool selected: false
 
     signal clicked()
 
@@ -19,11 +20,13 @@ Item {
         anchors.fill: parent
         color: "#202020"
         radius: 8
-        border.width: 1
+        border.width: root.selected ? 2 : 1
 
-        border.color: mouseArea.containsMouse ? root.accentColor : "#3d3d3d"
+        border.color: root.selected ? root.accentColor : (mouseArea.containsMouse ? root.accentColor : "#3d3d3d")
 
-        Behavior on border.color { ColorAnimation { duration: 200 } }
+        Behavior on border.color {
+            ColorAnimation { duration: 200 }
+        }
 
         Row {
             anchors.fill: parent
@@ -33,7 +36,7 @@ Item {
             Rectangle {
                 id: imageContainer
                 width: parent.height - 20
-                height: width
+                height: imageContainer.width
                 radius: 6
                 clip: true
                 color: "#1a1a1a"

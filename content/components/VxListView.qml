@@ -6,8 +6,8 @@ Rectangle {
 
     property alias model: internalList.model
 
-    signal itemClicked(int index, string name)
-    signal itemDoubleClicked(int index, string name)
+    signal itemClicked(int index, string name, string path)
+    signal itemDoubleClicked(int index, string name, string path)
 
     property color listBackgroundColor: "#444444"
     property color borderColor: "#a82828"
@@ -48,10 +48,10 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
                     internalList.currentIndex = index
-                    root.itemClicked(index, model.name)
+                    root.itemClicked(index, model.name, model.path)
                 }
                 onDoubleClicked: {
-                    root.itemDoubleClicked(index, model.name)
+                    root.itemDoubleClicked(index, model.name, model.path)
                 }
             }
         }

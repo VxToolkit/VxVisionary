@@ -19,6 +19,7 @@ public:
 
     enum ProjectRoles {
         NameRole = Qt::UserRole + 1,
+        PathRole = Qt::UserRole + 2
     };
 
     [[nodiscard]] int rowCount(const QModelIndex &parent = QModelIndex()) const override;

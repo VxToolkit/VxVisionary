@@ -75,12 +75,12 @@ Window {
 
         model: appController.projectModel
 
-        onItemClicked: (index, name) => {
-            console.log("Selected: " + name)
+        onItemClicked: (index, name, path) => {
+            console.log("Selected: " + name + " at " + path)
         }
 
-        onItemDoubleClicked: (index, name) => {
-            appController.loadProject(name)
+        onItemDoubleClicked: (index, name, path) => {
+            appController.loadProject(path)
         }
     }
 
@@ -224,6 +224,8 @@ Window {
             width: projectStack.width
             height: projectStack.height
 
+            property string projectName: ""
+
             Text {
                 text: "Configure custom template"
                 color: "white"
@@ -255,7 +257,8 @@ Window {
                             return
                         }
 
-                        appController.makeProjectCustom(projectNameField.text, templateSource, templateSourceDropdown.currentText)
+                        var type = templateSourceDropdown.currentText === "Local Directory" ? "Directory" : "Url"
+                        appController.makeProject(projectName, "Custom", templateSource, type)
 
                         window.projectOnboardingDialog.visible = false
                     }
@@ -337,7 +340,7 @@ Window {
 
             property string presetName: ""
             property string projectName: ""
-            property string selectedMode: "default"
+            property string selectedMode: "vxtemplate"
 
             ColumnLayout {
                 anchors.fill: parent
@@ -377,9 +380,7 @@ Window {
                         imageSource: "../../assets/Logo.png"
                         accentColor: "#4CAF50"
 
-                        opacity: selectedMode === "default" ? 1.0 : 0.5
-                        scale: selectedMode === "default" ? 1.02 : 1.0
-
+                        selected: selectedMode === "vxtemplate"
                         onClicked: selectedMode = "vxtemplate"
                     }
 
@@ -391,9 +392,7 @@ Window {
                         imageSource: "../../assets/Icons/custom.png"
                         accentColor: "#2196F3"
 
-                        opacity: selectedMode === "custom" ? 1.0 : 0.5
-                        scale: selectedMode === "custom" ? 1.02 : 1.0
-
+                        selected: selectedMode === "custom"
                         onClicked: selectedMode = "custom"
                     }
                 }
@@ -416,14 +415,16 @@ Window {
                             console.log("Blueprint:", presetName)
                             console.log("Custom Template Mode:", selectedMode)
 
-                            if (selectedMode == "custom") {
-                                projectStack.push(customTemplatePage)
+                            if (selectedMode === "custom") {
+                                projectStack.push(customTemplatePage, {
+                                    "projectName": projectName
+                                })
                             }
                             else {
-                                appController.makeProject(projectName, presetName, selectedMode)
+                                appController.makeProject(projectName, presetName, "https://github.com/VxToolkit/VxTemplate.git", "Url")
 
                                 window.projectOnboardingDialog.visible = false
-                                selectedMode = "default"
+                                selectedMode = "vxtemplate"
                             }
                         }
                     }

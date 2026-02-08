@@ -25,6 +25,10 @@ QVariant ProjectModel::data(const QModelIndex& index, int role) const {
     const ListedProject& project = projects.at(static_cast<size_t>(index.row()));
 
     if (role == NameRole) {
+        QFileInfo info(project.path);
+        return info.baseName();
+    }
+    else if (role == PathRole) {
         return project.path;
     }
 
@@ -35,6 +39,7 @@ QHash<int, QByteArray> ProjectModel::roleNames() const {
     QHash<int, QByteArray> roles;
 
     roles[NameRole] = "name";
+    roles[PathRole] = "path";
     return roles;
 }
 

@@ -9,9 +9,50 @@
 #include <QStandardPaths>
 #include <QtLogging>
 #include <QProgressDialog>
+#include <QThread>
+#include <QEventLoop>
+#include <atomic>
 
 #include "ArenaAsset.hpp"
 #include "git2.h"
+
+namespace {
+    struct GitClonePayload {
+        QProgressDialog* dialog;
+        std::atomic<bool> canceled{false};
+    };
+
+    int fetch_progress(const git_transfer_progress *stats, void *payload)
+    {
+        auto* data = static_cast<GitClonePayload*>(payload);
+
+        if (data->canceled) return -1;
+
+        if (stats->total_objects > 0) {
+            int fetch_percent = (100 * stats->received_objects) / stats->total_objects;
+            QString msg = QString("Downloading objects: %1/%2").arg(stats->received_objects).arg(stats->total_objects);
+
+            QMetaObject::invokeMethod(data->dialog, "setLabelText", Qt::QueuedConnection, Q_ARG(QString, msg));
+            QMetaObject::invokeMethod(data->dialog, "setValue", Qt::QueuedConnection, Q_ARG(int, fetch_percent));
+        }
+
+        return 0;
+    }
+
+    void checkout_progress(const char *path, size_t completed_steps, size_t total_steps, void *payload)
+    {
+        auto* data = static_cast<GitClonePayload*>(payload);
+        if (data->canceled) return;
+
+        if (total_steps > 0) {
+            int percent = (100 * completed_steps) / total_steps;
+            QString msg = QString("Checking out files: %1%").arg(percent);
+
+            QMetaObject::invokeMethod(data->dialog, "setLabelText", Qt::QueuedConnection, Q_ARG(QString, msg));
+            QMetaObject::invokeMethod(data->dialog, "setValue", Qt::QueuedConnection, Q_ARG(int, percent));
+        }
+    }
+}
 
 std::vector<std::string> Project::recent_projects;
 #define PROJECT_FORMAT_VERSION 1
@@ -140,12 +181,12 @@ Project::Project(const QString& projectPath) : templateSourceType(TemplateSource
     QDataStream filedata(&file);
 
     read_from_datastream(filedata);
+
+    getTemplatePath(); // make sure the template path is ready
 }
 
 Project::Project(QString projectName, QString projectPath, TemplateSourceType sourceType, const std::string& source) : name(std::move(projectName)), path(std::move(projectPath)), templateSourceType(sourceType), templateSource(source) {
-    QProgressDialog progress("Fetching project...", "Cancel", 0, 0);
     getTemplatePath(); // make sure the path is ready
-    progress.done(0);
 }
 
 Project::~Project() {
@@ -212,21 +253,57 @@ QDir Project::cache_url_template(const QDir& templatePath, const std::string& ur
     QDir full_path = templatePath.filePath(QString::fromStdString(uuid));
 
     if (!full_path.exists()) {
-        git_repository *repo = nullptr;
+        QProgressDialog progress("Cloning template...", "Cancel", 0, 100);
+        progress.setWindowModality(Qt::WindowModal);
+        progress.setMinimumDuration(0);
+
+        GitClonePayload payload;
+        payload.dialog = &progress;
+
+        QObject::connect(&progress, &QProgressDialog::canceled, [&payload](){
+            payload.canceled = true;
+        });
 
         const char* raw_url = url.c_str();
-
         std::string pathStr = full_path.path().toStdString();
         const char* destination_path = pathStr.c_str();
 
         git_clone_options clone_opts = GIT_CLONE_OPTIONS_INIT;
+        clone_opts.fetch_opts.callbacks.transfer_progress = fetch_progress;
+        clone_opts.fetch_opts.callbacks.payload = &payload;
+        clone_opts.checkout_opts.progress_cb = checkout_progress;
+        clone_opts.checkout_opts.progress_payload = &payload;
 
-        int error = git_clone(&repo, raw_url, destination_path, &clone_opts);
+        int error = 0;
+        git_repository *repo = nullptr;
+        std::string errorMessage;
+
+        QThread* thread = QThread::create([&]() {
+            error = git_clone(&repo, raw_url, destination_path, &clone_opts);
+            if (error != 0) {
+                const git_error* e = git_error_last();
+                if (e && e->message) {
+                    errorMessage = e->message;
+                }
+            }
+        });
+
+        QEventLoop loop;
+        QObject::connect(thread, &QThread::finished, &loop, &QEventLoop::quit);
+
+        progress.show();
+        thread->start();
+        loop.exec();
+
+        thread->deleteLater();
+        progress.close();
 
         if (error != 0) {
-            const git_error* e = git_error_last();
-            qDebug() << "Git clone failed:" << (e && e->message ? e->message : "Unknown error");
-            throw std::runtime_error("Failed to clone template: " + url);
+            qDebug() << "Git clone failed:" << QString::fromStdString(errorMessage);
+            if (payload.canceled) {
+                throw std::runtime_error("Template download canceled by user.");
+            }
+            throw std::runtime_error("Failed to clone template: " + url + " Error: " + errorMessage);
         }
 
         git_repository_free(repo);

@@ -105,10 +105,17 @@ qt_add_qml_module(VxtVisionary
     assets/Icons/folder.png
 )
 
+if(APPLE)
+    list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew" "/usr/local")
+
+    set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/opt/homebrew/lib/pkgconfig:/usr/local/lib/pkgconfig")
+endif()
+
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGIT2 REQUIRED libgit2)
 
 target_include_directories(VxtVisionary PRIVATE ${LIBGIT2_INCLUDE_DIRS})
+target_link_directories(VxtVisionary PRIVATE ${LIBGIT2_LIBRARY_DIRS})
 
 target_link_libraries(VxtVisionary
     PRIVATE Qt6::Quick

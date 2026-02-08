@@ -11,6 +11,7 @@
 #include <QProgressDialog>
 #include <QThread>
 #include <QEventLoop>
+#include <QTimer>
 #include <atomic>
 
 #include "ArenaAsset.hpp"
@@ -181,8 +182,6 @@ Project::Project(const QString& projectPath) : templateSourceType(TemplateSource
     QDataStream filedata(&file);
 
     read_from_datastream(filedata);
-
-    getTemplatePath(); // make sure the template path is ready
 }
 
 Project::Project(QString projectName, QString projectPath, TemplateSourceType sourceType, const std::string& source) : name(std::move(projectName)), path(std::move(projectPath)), templateSourceType(sourceType), templateSource(source) {
@@ -335,3 +334,17 @@ QDir Project::getTemplatePath() const {
     }
     throw std::runtime_error("Unknown template source type");
 }
+
+void Project::ensureTemplateCached() {
+    if (templateSourceType == TemplateSourceType::Url) {
+        QTimer::singleShot(0, [this]() {
+            try {
+                getTemplatePath();
+            } catch (const std::exception& e) {
+                qWarning() << "Failed to cache template:" << e.what();
+            }
+        });
+    }
+}
+
+

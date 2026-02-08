@@ -68,6 +68,8 @@ void AppController::loadProject(const QString &projectPath) {
 
         m_currentLoadedProject = newProject;
 
+        newProject->ensureTemplateCached();
+
         Project::addRecentProject(projectPath.toStdString());
 
         auto oldRootObjects = m_engine->rootObjects();

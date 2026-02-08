@@ -42,7 +42,7 @@ public:
     std::string getTemplateUUID() const;
 
     QDir getTemplatePath() const;
-
+    void ensureTemplateCached();
 
 protected:
     QString name;

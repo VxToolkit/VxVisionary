@@ -23,6 +23,10 @@ ArenaEditor::ArenaEditor(QObject* parent, QQmlApplicationEngine* engine, QObject
     currentElementsModel = new ArenaElementsModel(this);
     currentPropertyModel = new ArenaPropertyModel(this);
     arenaDrawable = new ArenaDrawable();
+
+    connect(currentPropertyModel, &ArenaPropertyModel::propertyEdited, this, [this]() {
+        m_controller->markProjectDirty();
+    });
 }
 
 void ArenaEditor::provideWindow(QObject* window) {
@@ -50,6 +54,7 @@ void ArenaEditor::newArena() const {
     if (ok && !newName.isEmpty()) {
         ArenaAsset *newArena = new ArenaAsset(newName, {12,12});
         m_controller->currentLoadedProject()->addAsset(dynamic_cast<Asset*>(newArena));
+        m_controller->markProjectDirty();
     }
     currentElementsModel->reset();
 }
@@ -174,6 +179,7 @@ void ArenaEditor::addElementToCurrentArena() {
             qDebug() << "adding new element " << picker;
             newElement->name = picker;
             activeArena->addElement(newElement);
+            m_controller->markProjectDirty();
             emit arenaChanged();
         } else {
             QMessageBox::warning(nullptr, "Error", "Failed to create the selected element.");
@@ -204,6 +210,7 @@ void ArenaEditor::removeSelectedElementFromCurrentArena() {
 
     auto& elements = activeArena->getElements();
     elements.erase(elements.begin() + selectedElementIndex);
+    m_controller->markProjectDirty();
 
     selectedElementIndex = -1;
     currentPropertyModel->setTargetElement(nullptr);
@@ -258,4 +265,3 @@ ArenaElement* ArenaEditor::getSelectedElement() const {
 int ArenaEditor::getSelectedElementIndex() const {
     return selectedElementIndex;
 }
-

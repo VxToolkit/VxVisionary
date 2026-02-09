@@ -18,11 +18,14 @@ public:
     Project(QString projectName, QString projectPath, TemplateSourceType sourceType, const std::string& source);
     ~Project();
     void writeToFile(QDataStream& filedata) const;
-    void save() const;
+    void save();
     void addAsset(Asset* asset);
 
     std::vector<Asset*>& getAssets();
     std::vector<Asset*> getAssetsOfType(Vxt::AssetType type) const;
+
+    void markDirty();
+    bool isDirty() const;
 
     void read_from_datastream(QDataStream& filedata);
 
@@ -47,6 +50,7 @@ public:
 protected:
     QString name;
     QDir path;
+    bool m_dirty = false;
     // statics
     static std::vector<std::string> recent_projects;
     std::vector<Asset*> assets;

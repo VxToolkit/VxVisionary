@@ -42,7 +42,9 @@ Window {
             MenuItem {
                 text: "Exit"
                 onTriggered: {
-                    Qt.quit()
+                    if (appController.confirmCloseWithUnsavedChanges()) {
+                        Qt.quit()
+                    }
                 }
             }
             MenuItem {

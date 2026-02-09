@@ -92,6 +92,7 @@ bool ArenaPropertyModel::setData(const QModelIndex &index, const QVariant &value
         }
 
         emit dataChanged(index, index, {ValueRole});
+        emit propertyEdited();
         return true;
     }
 

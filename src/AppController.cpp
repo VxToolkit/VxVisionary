@@ -87,11 +87,18 @@ void AppController::loadProject(const QString &projectPath) {
         QObject *newDashboard = m_engine->rootObjects().last();
         QQuickWindow *newWindow = qobject_cast<QQuickWindow*>(newDashboard);
 
+        // if (newWindow) {
+        //     connect(newWindow, &QQuickWindow::closing, [this]() {
+        //         delete m_currentLoadedProject;
+        //         m_currentLoadedProject = nullptr;
+        //         QCoreApplication::quit();
+        //     });
+        // }
+
         if (newWindow) {
             connect(newWindow, &QQuickWindow::closing, [this]() {
                 delete m_currentLoadedProject;
                 m_currentLoadedProject = nullptr;
-                QCoreApplication::quit();
             });
         }
 
@@ -183,6 +190,42 @@ std::vector<Asset*> AppController::getAssetsOfType(Vxt::AssetType type) const {
 void AppController::saveCurrentProject() {
     if (m_currentLoadedProject) {
         m_currentLoadedProject->save();
+    }
+}
+
+void AppController::markProjectDirty() {
+    if (m_currentLoadedProject) {
+        m_currentLoadedProject->markDirty();
+    }
+}
+
+bool AppController::isProjectDirty() const {
+    if (m_currentLoadedProject) {
+        return m_currentLoadedProject->isDirty();
+    }
+    return false;
+}
+
+bool AppController::confirmCloseWithUnsavedChanges() {
+    if (!m_currentLoadedProject || !m_currentLoadedProject->isDirty()) {
+        return true;
+    }
+
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        nullptr,
+        "Unsaved Changes",
+        "You have unsaved changes. Do you want to save before closing?",
+        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+        QMessageBox::Save
+    );
+
+    if (reply == QMessageBox::Save) {
+        m_currentLoadedProject->save();
+        return true;
+    } else if (reply == QMessageBox::Discard) {
+        return true;
+    } else {
+        return false;
     }
 }
 

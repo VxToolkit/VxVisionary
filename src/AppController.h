@@ -39,6 +39,9 @@ public:
     Q_INVOKABLE void genericElementReceived(QString picker);
     Q_INVOKABLE void loadProjectFromFile();
     Q_INVOKABLE QString openDirectoryDialog();
+    Q_INVOKABLE void markProjectDirty();
+    Q_INVOKABLE bool isProjectDirty() const;
+    Q_INVOKABLE bool confirmCloseWithUnsavedChanges();
 
     Q_INVOKABLE void makeProject(QString projectName, QString presetName, QString templateSource, QString templateSourceType);
 

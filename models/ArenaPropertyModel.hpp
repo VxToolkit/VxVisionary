@@ -25,6 +25,10 @@ public:
     [[nodiscard]] static QString getPropTypeName(std::any& props);
 
     void setTargetElement(ArenaElement* asset);
+
+signals:
+    void propertyEdited();
+
 private:
     ArenaElement* targetAsset;
 };

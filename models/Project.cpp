@@ -200,7 +200,7 @@ QDir Project::getPath() const {
     return path;
 }
 
-void Project::save() const {
+void Project::save() {
     QFile file(path.filePath(name) + ".vxtemplate");
     if (!file.open(QIODevice::WriteOnly)) {
         throw std::runtime_error("Failed to save project file");
@@ -208,6 +208,8 @@ void Project::save() const {
 
     QDataStream filedata(&file);
     writeToFile(filedata);
+
+    m_dirty = false;
 }
 
 void Project::addAsset(Asset* asset) {
@@ -347,4 +349,11 @@ void Project::ensureTemplateCached() {
     }
 }
 
+void Project::markDirty() {
+    m_dirty = true;
+}
+
+bool Project::isDirty() const {
+    return m_dirty;
+}
 

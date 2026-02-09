@@ -74,7 +74,9 @@ Window {
             MenuItem {
                 text: "Exit"
                 onTriggered: {
-                    Qt.quit()
+                    if (appController.confirmCloseWithUnsavedChanges()) {
+                        Qt.quit()
+                    }
                 }
             }
             MenuItem {
@@ -139,6 +141,14 @@ Window {
                     }
                 }
             }
+        }
+    }
+
+    onClosing: (close) => {
+        if (appController.confirmCloseWithUnsavedChanges()) {
+            close.accepted = true;
+        } else {
+            close.accepted = false;
         }
     }
 }

@@ -405,10 +405,6 @@ Window {
                     Layout.alignment: Qt.AlignHCenter
                     spacing: 20
 
-                    VxButton {
-                        text: "Back"
-                        onVxClicked: projectStack.pop()
-                    }
 
                     VxButton {
                         text: "Create Project"
@@ -429,6 +425,11 @@ Window {
                                 selectedMode = "vxtemplate"
                             }
                         }
+                    }
+
+                    VxButton {
+                        text: "Back"
+                        onVxClicked: projectStack.pop()
                     }
                 }
             }

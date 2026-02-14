@@ -133,7 +133,26 @@ QString AppController::getProjectName() const {
     return "null";
 }
 
+void AppController::updateProjectTemplate() {
+    if (!currentLoadedProject()) {
+        QMessageBox::critical(nullptr, "Error", "No project loaded.");
+        return;
+    }
+
+    try {
+        currentLoadedProject()->updateTemplate();
+        QMessageBox::information(nullptr, "Success", "Project template updated successfully.");
+    } catch (const std::runtime_error& e) {
+        QMessageBox::critical(nullptr, "Failed to update template.", e.what());
+    }
+}
+
 void AppController::openWorkspace(QString name) {
+    if (!currentLoadedProject()->hasTemplateInfo()) {
+        QMessageBox::critical(nullptr, "Error", "Project template info not loaded. Please ensure the project template is valid and reload the project.");
+        return;
+    }
+
     if (name == "Arena Editor") {
         ArenaEditor* editorFound = getEditorOfType<ArenaEditor>(EditorType::Arena);
         if (editorFound) {
@@ -299,7 +318,7 @@ void AppController::genericElementReceived(QString picker) {
 }
 
 void AppController::loadProjectFromFile() {
-    QString fileName = QFileDialog::getOpenFileName(nullptr, "Open Project", QDir::homePath(), "VxTemplate Project Files (*.vxtemplate)");
+    QString fileName = QFileDialog::getOpenFileName(nullptr, "Open Project", QDir::homePath(), "VxTemplate Project Files (*.vxp)");
     if (fileName.isEmpty()) {
         return;
     }
@@ -330,7 +349,7 @@ void AppController::makeProject(QString projectName, QString presetName, QString
         Project::addRecentProject(projectPath.toStdString());
 
         newProject->save();
-        loadProject(projectPath + "/" + projectName + ".vxtemplate");
+        loadProject(projectPath + "/" + projectName + ".vxp");
     } catch (const std::runtime_error& e) {
         QMessageBox::critical(nullptr, "Could not create project", e.what());
     }

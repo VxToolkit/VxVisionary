@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Asset.hpp"
+class TemplateInfo;
 
 class Project {
 public:
@@ -46,6 +47,11 @@ public:
 
     QDir getTemplatePath() const;
     void ensureTemplateCached();
+    void updateTemplate();
+
+    void loadTemplateInfo();
+
+    bool hasTemplateInfo() const;
 
 protected:
     QString name;
@@ -57,4 +63,5 @@ protected:
 
     std::string templateSource;
     TemplateSourceType templateSourceType;
+    TemplateInfo* templateInfo = nullptr;
 };

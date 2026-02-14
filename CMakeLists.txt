@@ -49,6 +49,8 @@ qt_add_executable(VxtVisionary
     models/Drawables/ArenaDrawable.hpp
     models/DrawUtils/HatchedBox.cpp
     models/DrawUtils/HatchedBox.hpp
+    models/VxEngine/TemplateInfo.cpp
+    models/VxEngine/TemplateInfo.hpp
 )
 
 target_include_directories(VxtVisionary PRIVATE src)
@@ -114,7 +116,7 @@ endif()
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGIT2 REQUIRED libgit2)
 
-target_include_directories(VxtVisionary PRIVATE ${LIBGIT2_INCLUDE_DIRS})
+target_include_directories(VxtVisionary PRIVATE ${LIBGIT2_INCLUDE_DIRS}, extern)
 target_link_directories(VxtVisionary PRIVATE ${LIBGIT2_LIBRARY_DIRS})
 
 target_link_libraries(VxtVisionary

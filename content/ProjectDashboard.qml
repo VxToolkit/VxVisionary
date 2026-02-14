@@ -86,6 +86,15 @@ Window {
                 }
             }
         }
+        Menu {
+            title: "Project"
+            MenuItem {
+                text: "Update Template"
+                onTriggered: {
+                    appController.updateProjectTemplate()
+                }
+            }
+        }
     }
 
     Column {

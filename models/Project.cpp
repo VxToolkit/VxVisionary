@@ -10,11 +10,14 @@
 #include <QtLogging>
 #include <QProgressDialog>
 #include <QThread>
+#include <QMessageBox>
 #include <QEventLoop>
 #include <QTimer>
 #include <atomic>
+#include <qtextformat.h>
 
 #include "ArenaAsset.hpp"
+#include "VxEngine/TemplateInfo.hpp"
 #include "git2.h"
 
 namespace {
@@ -167,6 +170,33 @@ void Project::read_from_datastream(QDataStream& filedata) {
     }
 }
 
+bool Project::hasTemplateInfo() const {
+    return templateInfo != nullptr;
+}
+
+void Project::updateTemplate() {
+    git_repository* repo = nullptr;
+    git_remote* remote = nullptr;
+    git_repository_open(&repo, getTemplatePath().path().toStdString().c_str());
+
+    git_remote_lookup(&remote, repo, "origin");
+    git_remote_fetch(remote, nullptr, nullptr, nullptr);
+
+    git_object *target_commit = nullptr;
+
+    git_revparse_single(&target_commit, repo, "origin/main");
+
+    git_checkout_options checkout_opts = GIT_CHECKOUT_OPTIONS_INIT;
+    checkout_opts.checkout_strategy = GIT_CHECKOUT_FORCE;
+
+    int error = git_reset(repo, target_commit, GIT_RESET_HARD, &checkout_opts);
+
+    if (error < 0) {
+        const git_error *e = git_error_last();
+        QMessageBox::warning(nullptr, "Failed to update template.", QString::fromStdString("Git error: " + std::string(e->message)));
+    }
+}
+
 Project::Project(const QString& projectPath) : templateSourceType(TemplateSourceType::Directory), templateSource("") {
     QFileInfo info(projectPath);
     path = QDir(info.absoluteDir());
@@ -182,14 +212,26 @@ Project::Project(const QString& projectPath) : templateSourceType(TemplateSource
     QDataStream filedata(&file);
 
     read_from_datastream(filedata);
+    loadTemplateInfo();
 }
 
 Project::Project(QString projectName, QString projectPath, TemplateSourceType sourceType, const std::string& source) : name(std::move(projectName)), path(std::move(projectPath)), templateSourceType(sourceType), templateSource(source) {
     getTemplatePath(); // make sure the path is ready
+    loadTemplateInfo();
 }
 
 Project::~Project() {
     qDeleteAll(assets);
+}
+
+void Project::loadTemplateInfo() {
+    TemplateInfo* newInfo = new TemplateInfo(getTemplatePath());
+    if (!newInfo->errorState.empty()) {
+        qWarning() << "Failed to load template info:" << QString::fromStdString(newInfo->errorState);
+        QMessageBox::warning(nullptr, "Template not parsed.", QString::fromStdString("The VxEngine failed to parse the template:\n" + newInfo->errorState + "\nPlease ensure the template has a valid template schema then reload the project."));
+        delete newInfo;
+        return;
+    }
 }
 
 QString Project::getName() const {
@@ -201,7 +243,7 @@ QDir Project::getPath() const {
 }
 
 void Project::save() {
-    QFile file(path.filePath(name) + ".vxtemplate");
+    QFile file(path.filePath(name) + ".vxp");
     if (!file.open(QIODevice::WriteOnly)) {
         throw std::runtime_error("Failed to save project file");
     }
